@@ -8,10 +8,14 @@
         body { background-color: #121212; color: white; }
         .resenha-card { background-color: #1e1e1e; border-left: 5px solid #00d4ff; }
         .nota { color: #ffc107; font-weight: bold; }
+        .form-section { background-color: #1e1e1e; border-radius: 10px; padding: 25px; border: 1px solid #333; }
+        .form-control, .form-select { background-color: #2c2c2c; border: 1px solid #444; color: white; }
+        .form-control:focus, .form-select:focus { background-color: #2c2c2c; color: white; border-color: #00d4ff; box-shadow: none; }
+        label { color: #aaa; margin-bottom: 5px; }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container mt-5 mb-5">
         <a href="{% url 'home' %}" class="btn btn-outline-light mb-4">← Voltar</a>
         
         <div class="row">
@@ -24,21 +28,62 @@
                 <hr class="bg-secondary">
                 <h5>Sinopse:</h5>
                 <p>{{ livro.sinopse }}</p>
+                
+                {% if user.is_authenticated %}
+                    <div class="mt-3">
+                        <span class="badge bg-dark border border-info text-info p-2">
+                            Seu XP Atual: {{ user.perfil.xp }}
+                        </span>
+                    </div>
+                {% endif %}
             </div>
         </div>
 
-        <h3 class="mt-5 mb-4">💬 Resenhas da Comunidade</h3>
-        {% for resenha in livro.resenhas.all %}
-            <div class="card resenha-card mb-3 shadow-sm">
-                <div class="card-body">
-                    <p class="mb-1"><strong>{{ resenha.usuario.username }}</strong> avaliou com <span class="nota">{{ resenha.nota }}/5</span></p>
-                    <p class="card-text">"{{ resenha.texto }}"</p>
-                    <small class="text-muted">Postado em: {{ resenha.data_postagem|date:"d/m/Y" }}</small>
+        <hr class="my-5 bg-secondary">
+
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="form-section mb-5 shadow">
+                    <h3 class="mb-4">✍️ Escrever sua Resenha</h3>
+                    {% if user.is_authenticated %}
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                {{ form.texto.label_tag }}
+                                {{ form.texto }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.nota.label_tag }}
+                                {{ form.nota }}
+                            </div>
+                            <button type="submit" class="btn btn-info w-100 fw-bold">Publicar e Ganhar +10 XP</button>
+                        </form>
+                    {% else %}
+                        <div class="text-center p-3">
+                            <p class="text-warning mb-0">Você precisa estar <a href="{% url 'login' %}" class="text-info">logado</a> para avaliar e ganhar XP.</p>
+                        </div>
+                    {% endif %}
                 </div>
+
+                <h3 class="mb-4">💬 Resenhas da Comunidade</h3>
+                {% for resenha in livro.resenhas.all %}
+                    <div class="card resenha-card mb-3 shadow-sm">
+                        <div class="card-body">
+                            <p class="mb-1">
+                                <strong>{{ resenha.usuario.username }}</strong> 
+                                avaliou com <span class="nota">{{ resenha.nota }}/5</span>
+                            </p>
+                            <p class="card-text">"{{ resenha.texto }}"</p>
+                            <small class="text-muted">Postado em: {{ resenha.data_postagem|date:"d/m/Y" }}</small>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="alert alert-dark border-secondary text-center">
+                        Ainda não há resenhas para este livro. Seja o primeiro!
+                    </div>
+                {% endfor %}
             </div>
-        {% empty %}
-            <p class="text-muted">Ainda não há resenhas para este livro.</p>
-        {% endfor %}
+        </div>
     </div>
 </body>
 </html>
