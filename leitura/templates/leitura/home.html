@@ -30,7 +30,7 @@
                         <p class="card-text">{{ livro.sinopse|truncatewords:20 }}</p>
                     </div>
                     <div class="card-footer bg-transparent border-0">
-                        <a href="#" class="btn btn-primary w-100">Ler Resenhas</a>
+                        <a href="{% url 'detalhes_livro' livro.pk %}" class="btn btn-primary w-100">Ler Resenhas</a>
                     </div>
                 </div>
             </div>
