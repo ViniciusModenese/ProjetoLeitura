@@ -4,72 +4,145 @@
 
 {% block content %}
 <style>
-    .resenha-card { background-color: #1e1e1e; border-left: 5px solid #00d4ff; }
-    .nota { color: #ffc107; font-weight: bold; }
-    .form-section { background-color: #1e1e1e; border-radius: 10px; padding: 25px; border: 1px solid #333; }
-    .form-control, .form-select { background-color: #2c2c2c; border: 1px solid #444; color: white; }
-    .form-control:focus, .form-select:focus { background-color: #2c2c2c; color: white; border-color: #00d4ff; box-shadow: none; }
-    label { color: #aaa; margin-bottom: 5px; }
+    /* Card da Resenha */
+    .resenha-card { 
+        background-color: #1e1e1e; 
+        border-left: 5px solid #00d4ff; 
+        border-radius: 12px; 
+        margin-bottom: 25px; 
+        overflow: hidden;
+    }
+    
+    /* Cabeçalho da Resenha (Nome e Estrelas) */
+    .resenha-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background-color: rgba(255, 255, 255, 0.03); /* Leve destaque no fundo */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .username-comment { 
+        color: #00d4ff !important; 
+        font-size: 1.2rem; 
+        font-weight: 700; 
+        margin: 0;
+    }
+
+    .star-rating { color: #ffc107; font-size: 1.1rem; white-space: nowrap; }
+    .star-muted { color: #444; }
+
+    /* Corpo da Resenha (Comentário e Badge) */
+    .resenha-body {
+        padding: 20px;
+    }
+
+    .badge-comment-icon-large { 
+        width: 90px; 
+        height: 90px; 
+        object-fit: contain; 
+        filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.2));
+        transition: 0.4s;
+    }
+    .badge-comment-icon-large:hover { transform: scale(1.1) rotate(-5deg); }
+
+    /* Outros Estilos */
+    .form-section { background-color: #1e1e1e; border-radius: 12px; padding: 25px; border: 1px solid #333; }
+    .badge-img { width: 60px; height: 60px; object-fit: contain; filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.4)); }
 </style>
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-4 text-center">
         {% if livro.capa %}
-            <img src="{{ livro.capa.url }}" class="img-fluid rounded shadow" alt="{{ livro.titulo }}">
+            <img src="{{ livro.capa.url }}" class="img-fluid rounded shadow-lg" style="max-height: 450px;">
         {% endif %}
     </div>
     <div class="col-md-8">
-        <h1 class="text-info">{{ livro.titulo }}</h1>
-        <p class="lead text-secondary">Autor: {{ livro.autor }}</p>
-        <hr class="bg-secondary">
-        <h5>Sinopse:</h5>
-        <p class="text-light" style="line-height: 1.6;">{{ livro.sinopse }}</p>
+        <h1 class="text-info fw-bold display-5">{{ livro.titulo }}</h1>
+        <p class="lead text-secondary">Por: {{ livro.autor }}</p>
+        
+        <div class="d-flex align-items-center gap-3 mt-4">
+            <div class="bg-dark border border-info px-3 py-2 rounded-pill">
+                <span class="text-info fw-bold">⭐ {{ user.perfil.xp }} XP</span>
+            </div>
+            <div class="d-flex gap-2">
+                {% for badge in user.perfil.badges.all %}
+                    {% if badge.imagem %}
+                        <img src="{{ badge.imagem.url }}" class="badge-img" title="{{ badge.nome }}: {{ badge.descricao }}" data-bs-toggle="tooltip">
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <hr class="bg-secondary my-4" style="opacity: 0.2;">
+        <h5 class="text-info">Sinopse:</h5>
+        <p class="text-light" style="line-height: 1.8;">{{ livro.sinopse }}</p>
     </div>
 </div>
 
-<hr class="my-5 bg-secondary">
-
-<div class="row">
+<div class="row mt-5">
     <div class="col-lg-8 mx-auto">
         <div class="form-section mb-5 shadow">
             <h3 class="mb-4 text-info">✍️ Escrever sua Resenha</h3>
             {% if user.is_authenticated %}
                 <form method="post">
                     {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="id_texto">Sua opinião:</label>
-                        {{ form.texto }}
-                    </div>
-                    <div class="mb-3">
-                        <label for="id_nota">Sua nota:</label>
-                        {{ form.nota }}
-                    </div>
+                    <div class="mb-3"><label class="form-label text-secondary">Sua opinião:</label>{{ form.texto }}</div>
+                    <div class="mb-3"><label class="form-label text-secondary">Sua nota:</label>{{ form.nota }}</div>
                     <button type="submit" class="btn btn-info w-100 fw-bold py-2 mt-2" style="color: #121212;">Publicar e Ganhar +10 XP</button>
                 </form>
-            {% else %}
-                <div class="text-center p-3">
-                    <p class="text-warning mb-0">Você precisa estar <a href="{% url 'login' %}" class="text-info text-decoration-none fw-bold">logado</a> para avaliar e ganhar XP.</p>
-                </div>
             {% endif %}
         </div>
 
         <h3 class="mb-4">💬 Resenhas da Comunidade</h3>
+        
         {% for resenha in livro.resenhas.all %}
-            <div class="card resenha-card mb-3 shadow-sm border-0">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <p class="mb-1"><strong>{{ resenha.usuario.username }}</strong></p>
-                        <span class="nota">★ {{ resenha.nota }}/5</span>
+            <div class="card resenha-card shadow-sm border-0">
+                
+                <div class="resenha-header">
+                    <span class="username-comment">{{ resenha.usuario.username }}</span>
+                    <div class="star-rating">
+                        {% for i in "12345" %}
+                            {% if resenha.nota >= forloop.counter %}
+                                <i class="fas fa-star"></i>
+                            {% else %}
+                                <i class="fas fa-star star-muted"></i>
+                            {% endif %}
+                        {% endfor %}
                     </div>
-                    <p class="card-text text-light opacity-75">"{{ resenha.texto }}"</p>
-                    <small class="text-muted d-block mt-2">Postado em: {{ resenha.data_postagem|date:"d/m/Y" }}</small>
+                </div>
+
+                <div class="resenha-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <p class="card-text text-light opacity-75" style="font-size: 1.05rem; line-height: 1.6; font-style: italic; margin-bottom: 0;">
+                                "{{ resenha.texto }}"
+                            </p>
+                        </div>
+                        
+                        <div class="col-auto text-center" style="min-width: 120px;">
+                            {% with b=resenha.usuario.perfil.badges.all.last %}
+                                {% if b and b.imagem %}
+                                    <img src="{{ b.imagem.url }}" 
+                                         class="badge-comment-icon-large" 
+                                         title="{{ b.nome }}: {{ b.descricao }}" 
+                                         data-bs-toggle="tooltip">
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    </div>
                 </div>
             </div>
         {% empty %}
-            <div class="alert alert-dark border-secondary text-center py-4">
-                Ainda não há resenhas para este livro. Seja o primeiro a comentar!
-            </div>
+            <div class="alert alert-dark border-secondary text-center py-5">Ainda não há resenhas.</div>
         {% endfor %}
     </div>
 </div>
+
+<script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+</script>
 {% endblock %}

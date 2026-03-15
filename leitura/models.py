@@ -22,12 +22,22 @@ class Resenha(models.Model):
 
     def __str__(self):
         return f"Resenha de {self.usuario.username} para {self.livro.titulo}"
-    
+
+class Badge(models.Model):
+    nome = models.CharField(max_length=100)
+    descricao = models.TextField()
+    # Trocamos o campo de ícone (texto) por um ImageField
+    imagem = models.ImageField(upload_to='badges/', null=True, blank=True)
+    xp_minimo = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.nome
 
 class Perfil(models.Model):
-    usuario = models.OneToOneField(User, on_delete=models.CASCADE)
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
     xp = models.IntegerField(default=0)
     livros_lidos = models.IntegerField(default=0)
+    badges = models.ManyToManyField(Badge, blank=True)
 
     def __str__(self):
         return f"Perfil de {self.usuario.username}"

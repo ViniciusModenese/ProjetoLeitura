@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Livro, Perfil
+from .models import Livro, Perfil, Badge, Resenha
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from django.views import generic
@@ -22,10 +22,14 @@ def detalhes_livro(request, pk):
             resenha.usuario = request.user
             resenha.save()
 
-            # Lógica de Gamificação: +10 XP por resenha
             perfil = request.user.perfil
             perfil.xp += 10
             perfil.save()
+
+            badges_disponiveis = Badge.objects.filter(xp_minimo__lte=perfil.xp)
+            for badge in badges_disponiveis:
+                if badge not in perfil.badges.all():
+                    perfil.badges.add(badge)
 
             return redirect('detalhes_livro', pk=pk)
 
