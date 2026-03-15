@@ -1,0 +1,109 @@
+{% extends 'leitura/base.html' %}
+
+{% block title %}Cadastrar Novo Livro - EstanteAberta{% endblock %}
+
+{% block content %}
+<style>
+    .form-shell {
+        max-width: 940px;
+        margin: 0 auto;
+    }
+
+    .form-panel {
+        background: linear-gradient(145deg, #1a1f33 0%, #131a2b 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        box-shadow: 0 14px 40px rgba(0, 0, 0, 0.24);
+    }
+
+    .field-label {
+        color: #d7e4ff;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .form-control,
+    .form-select {
+        background-color: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #edf4ff;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background-color: rgba(255, 255, 255, 0.06);
+        border-color: #00d4ff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 212, 255, 0.15);
+        color: #edf4ff;
+    }
+
+    .upload-hint {
+        color: #89a0c7;
+        font-size: 0.9rem;
+    }
+
+    .errorlist {
+        color: #ff9f9f;
+        list-style: none;
+        padding-left: 0;
+        margin: 8px 0 0;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="form-shell">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Cadastrar Novo Livro</h2>
+            <p class="text-secondary mb-0">Preencha todos os campos e publique o livro com a primeira resenha da comunidade.</p>
+        </div>
+        <a href="{% url 'home' %}" class="btn btn-outline-info">Voltar</a>
+    </div>
+
+    <div class="form-panel p-4 p-lg-5">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <label class="field-label" for="{{ form.titulo.id_for_label }}">Titulo do livro</label>
+                    {{ form.titulo }}
+                    {{ form.titulo.errors }}
+                </div>
+                <div class="col-lg-6">
+                    <label class="field-label" for="{{ form.autor.id_for_label }}">Autor</label>
+                    {{ form.autor }}
+                    {{ form.autor.errors }}
+                </div>
+                <div class="col-12">
+                    <label class="field-label" for="{{ form.sinopse.id_for_label }}">Sinopse</label>
+                    {{ form.sinopse }}
+                    {{ form.sinopse.errors }}
+                </div>
+                <div class="col-lg-7">
+                    <label class="field-label" for="{{ form.texto.id_for_label }}">Primeira resenha</label>
+                    {{ form.texto }}
+                    {{ form.texto.errors }}
+                </div>
+                <div class="col-lg-5">
+                    <div class="mb-4">
+                        <label class="field-label" for="{{ form.nota.id_for_label }}">Nota da resenha</label>
+                        {{ form.nota }}
+                        {{ form.nota.errors }}
+                    </div>
+                    <div>
+                        <label class="field-label" for="{{ form.capa.id_for_label }}">Foto da capa</label>
+                        {{ form.capa }}
+                        <div class="upload-hint mt-2">A imagem da capa e obrigatoria para o livro aparecer corretamente no destaque da semana.</div>
+                        {{ form.capa.errors }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a href="{% url 'home' %}" class="btn btn-outline-light">Cancelar</a>
+                <button type="submit" class="btn btn-info fw-bold">Publicar Livro</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

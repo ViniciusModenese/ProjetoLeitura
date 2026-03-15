@@ -1,25 +1,401 @@
 {% extends 'leitura/base.html' %}
+{% load leitura_extras %}
 
 {% block title %}Home - EstanteAberta{% endblock %}
+{% block page_container_class %}container-fluid px-lg-4 px-2 mt-3{% endblock %}
 
 {% block content %}
-<div class="row row-cols-1 row-cols-md-3 g-4 mt-2">
-    {% for livro in livros %}
-    <div class="col">
-        <div class="card h-100 shadow border-0" style="background-color: #1e1e1e; transition: 0.3s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-            {% if livro.capa %}
-                <img src="{{ livro.capa.url }}" class="card-img-top" alt="{{ livro.titulo }}" style="height: 400px; object-fit: cover;">
-            {% endif %}
-            <div class="card-body">
-                <h5 class="card-title text-info">{{ livro.titulo }}</h5>
-                <p class="card-text text-secondary">Autor: {{ livro.autor }}</p>
-                <p class="card-text text-light">{{ livro.sinopse|truncatewords:20 }}</p>
+<style>
+    .dashboard-shell {
+        max-width: none;
+        width: 100%;
+        margin: 0 auto 24px;
+        min-height: calc(100vh - 150px);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .panel {
+        background: linear-gradient(145deg, #1a1f33 0%, #131a2b 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+    }
+
+    .section-title {
+        color: #e8efff;
+        font-size: 1.15rem;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+    }
+
+    .dashboard-title {
+        color: #f5f7ff;
+        font-size: clamp(2rem, 2.2vw, 2.5rem);
+        font-weight: 800;
+        letter-spacing: 0.2px;
+        margin-bottom: 16px;
+    }
+
+    .soft-line {
+        border-top: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
+    .progress-gadget {
+        position: relative;
+        max-width: 280px;
+        margin: 8px auto 0;
+        text-align: center;
+    }
+
+    .xp-ring {
+        width: 188px;
+        height: 188px;
+        margin: 0 auto 16px;
+        border-radius: 50%;
+        position: relative;
+        display: grid;
+        place-items: center;
+        background:
+            radial-gradient(circle at 50% 50%, rgba(114, 214, 255, 0.16) 0, rgba(114, 214, 255, 0.02) 44%, transparent 45%),
+            conic-gradient(from 220deg, #66f2ff calc(var(--value) * 1%), rgba(63, 79, 126, 0.32) 0);
+        box-shadow:
+            0 0 0 8px rgba(117, 129, 192, 0.08),
+            0 12px 28px rgba(0, 0, 0, 0.35),
+            0 0 24px rgba(0, 212, 255, 0.14);
+    }
+
+    .xp-ring::before {
+        content: "";
+        position: absolute;
+        inset: 16px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 30%, rgba(32, 55, 96, 0.9) 0, rgba(15, 24, 45, 0.96) 60%, #0f172c 100%);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 12px 30px rgba(255, 255, 255, 0.03);
+    }
+
+    .xp-ring::after {
+        content: "";
+        position: absolute;
+        inset: 4px;
+        border-radius: 50%;
+        border: 1px solid rgba(130, 206, 255, 0.12);
+        pointer-events: none;
+    }
+
+    .xp-ring-center {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+    }
+
+    .xp-ring-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #8bf5ff;
+        line-height: 1;
+        text-shadow: 0 0 16px rgba(80, 234, 255, 0.22);
+    }
+
+    .xp-ring-label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 1.6px;
+        color: #7d91bb;
+    }
+
+    .xp-ring-subvalue {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #d9e7ff;
+        line-height: 1;
+    }
+
+    .progress-caption {
+        color: #c7d9ff;
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+
+    .progress-helper {
+        font-size: 0.95rem;
+        color: #7dbddd;
+        max-width: 220px;
+        margin: 0 auto;
+        line-height: 1.45;
+    }
+
+    .destaque-thumb {
+        height: 400px;
+        width: 100%;
+        object-fit: contain;
+        object-position: center;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .book-item {
+        min-height: 345px;
+    }
+
+    .book-item {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        transition: transform 0.25s;
+    }
+
+    .book-item:hover {
+        transform: translateY(-4px);
+    }
+
+    .review-item {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 10px;
+        padding: 16px;
+        height: 100%;
+        min-height: 168px;
+        display: block;
+        text-decoration: none;
+        transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .review-item:hover {
+        transform: translateY(-3px);
+        border-color: rgba(0, 212, 255, 0.35);
+    }
+
+    .reviews-panel {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .reviews-grid {
+        flex: 1;
+    }
+
+    .star-line {
+        letter-spacing: 3px;
+        font-size: 1.5rem;
+        line-height: 1;
+    }
+
+    .star-filled {
+        display: inline-block;
+        background: linear-gradient(175deg, #fff59d 0%, #ffd600 45%, #f5a623 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        filter: drop-shadow(0 1px 4px rgba(255, 185, 0, 0.6));
+    }
+
+    .star-empty {
+        color: #3a3a50;
+    }
+
+    .gadget-badge-slot {
+        margin-top: 18px;
+        padding: 14px 12px 10px;
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .gadget-medal {
+        width: 140px;
+        height: 140px;
+        object-fit: contain;
+        filter: drop-shadow(0 0 18px rgba(0, 212, 255, 0.22));
+    }
+
+    .badge-hover-wrap {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .badge-hover-wrap .gadget-medal {
+        transition: transform 0.25s ease;
+    }
+
+    .badge-hover-wrap:hover .gadget-medal {
+        transform: scale(1.12);
+    }
+
+    .badge-hover-label {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #dff0ff;
+        background: rgba(9, 21, 43, 0.92);
+        border: 1px solid rgba(99, 209, 255, 0.35);
+        border-radius: 999px;
+        padding: 3px 12px;
+    }
+
+    .gadget-placeholder {
+        width: 88px;
+        height: 88px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #9bb0dc;
+        font-size: 2rem;
+    }
+
+    .gadget-badge-name {
+        color: #dce8ff;
+        font-weight: 700;
+        margin-top: 10px;
+        font-size: 1rem;
+    }
+
+    .gadget-badge-text {
+        color: #8ca1cb;
+        font-size: 0.9rem;
+        margin: 4px 0 0;
+    }
+
+    .book-item .small.fw-semibold {
+        font-size: 1.3rem !important;
+    }
+
+    .book-item .small.text-secondary {
+        font-size: 1.1rem !important;
+    }
+
+    .review-item .text-info {
+        font-size: 1.28rem;
+    }
+
+    .review-item .small {
+        font-size: 1.14rem !important;
+    }
+
+    .review-item .star-line {
+        font-size: 1.3rem;
+    }
+</style>
+
+<div class="dashboard-shell">
+    <h2 class="dashboard-title">Dashboard</h2>
+
+    <div class="row g-3 mb-3">
+        <div class="col-lg-5 col-xl-4">
+            <div class="panel p-3 h-100">
+                <div class="section-title mb-2">Seu Progresso</div>
+                <div class="progress-gadget">
+                    <div class="xp-ring" style="--value: {{ progress_percent }};">
+                        <div class="xp-ring-center">
+                            {% if user.is_authenticated and proxima_badge %}
+                                <span class="xp-ring-subvalue">{{ progress_current_xp }} de {{ progress_target_xp }}</span>
+                                <span class="xp-ring-label">XP total</span>
+                            {% else %}
+                                <span class="xp-ring-value">{{ xp_atual }}</span>
+                                <span class="xp-ring-label">XP</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if user.is_authenticated %}
+                        {% if proxima_badge %}
+                            <p class="progress-caption">Próxima conquista</p>
+                            <p class="progress-helper">Faltam {{ faltam_xp }} XP para desbloquear a medalha {{ proxima_badge.nome }}.</p>
+                        {% else %}
+                            <p class="progress-caption text-success">Coleção completa</p>
+                            <p class="progress-helper">Você já desbloqueou todas as medalhas disponíveis no momento.</p>
+                        {% endif %}
+                    {% else %}
+                        <p class="progress-caption">Acompanhe sua jornada</p>
+                        <p class="progress-helper">Faça login para ver seu XP, suas medalhas e a próxima meta.</p>
+                    {% endif %}
+                </div>
+
+                <div class="soft-line my-3"></div>
+                <div class="text-center gadget-badge-slot">
+                    {% with ultima_badge=user.perfil.badges.all.last %}
+                        {% if user.is_authenticated and ultima_badge and ultima_badge.imagem %}
+                            <div class="badge-hover-wrap">
+                                <img src="{{ ultima_badge.imagem.url }}" alt="{{ ultima_badge.nome }}" class="gadget-medal">
+                                <div class="badge-hover-label">{{ ultima_badge.nome }}</div>
+                            </div>
+
+                        {% else %}
+                            <span class="gadget-placeholder">🏅</span>
+                            <div class="gadget-badge-name">Nenhuma medalha ainda</div>
+                            <p class="gadget-badge-text">Sua última conquista aparecerá aqui.</p>
+                        {% endif %}
+                    {% endwith %}
+                </div>
             </div>
-            <div class="card-footer bg-transparent border-0 pb-3">
-                <a href="{% url 'detalhes_livro' livro.pk %}" class="btn w-100 fw-bold" style="background-color: #00d4ff; color: #121212;">Ler Resenhas</a>
+        </div>
+
+        <div class="col-lg-7 col-xl-8">
+            <div class="panel p-3 h-100">
+                <div class="section-title mb-3">Destaques da Semana</div>
+                <div class="row g-3">
+                    {% for livro in destaques_semana %}
+                        <div class="col-md-4">
+                            <a href="{% url 'detalhes_livro' livro.pk %}" class="book-item">
+                                {% if livro.capa %}
+                                    <img src="{{ livro.capa.url }}" class="destaque-thumb" alt="{{ livro.titulo }}">
+                                {% endif %}
+                                <p class="small fw-semibold text-light mt-2 mb-1 text-center">{{ livro.titulo|truncatechars:28 }}</p>
+                                <p class="small text-secondary text-center mb-1">{{ livro.autor|truncatechars:24 }}</p>
+                                <p class="star-line text-center mb-0">
+                                    {% with nota=livro.media_notas|default:0 %}
+                                        <i class="bi {{ nota|star_classes:1 }}"></i>
+                                        <i class="bi {{ nota|star_classes:2 }}"></i>
+                                        <i class="bi {{ nota|star_classes:3 }}"></i>
+                                        <i class="bi {{ nota|star_classes:4 }}"></i>
+                                        <i class="bi {{ nota|star_classes:5 }}"></i>
+                                    {% endwith %}
+                                </p>
+                            </a>
+                        </div>
+                    {% empty %}
+                        <p class="text-secondary mb-0">Os 3 últimos livros cadastrados aparecerão aqui.</p>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
-    {% endfor %}
+
+    <div class="panel p-3 mb-0 reviews-panel">
+        <div class="section-title mb-3">Últimas Resenhas da Comunidade</div>
+        <div class="row g-3 reviews-grid">
+            {% for resenha in ultimas_resenhas %}
+                <div class="col-md-6 col-xl-4">
+                    <a href="{% url 'detalhes_livro' resenha.livro.pk %}" class="review-item">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="text-info fw-semibold">{{ resenha.usuario.username }}</span>
+                            <span class="star-line">
+                                <i class="bi {{ resenha.nota|star_classes:1 }}"></i>
+                                <i class="bi {{ resenha.nota|star_classes:2 }}"></i>
+                                <i class="bi {{ resenha.nota|star_classes:3 }}"></i>
+                                <i class="bi {{ resenha.nota|star_classes:4 }}"></i>
+                                <i class="bi {{ resenha.nota|star_classes:5 }}"></i>
+                            </span>
+                        </div>
+                        <p class="small text-secondary mb-2">Sobre: {{ resenha.livro.titulo }}</p>
+                        <p class="small text-light mb-0 opacity-75">"{{ resenha.texto|truncatewords:22 }}"</p>
+                    </a>
+                </div>
+            {% empty %}
+                <p class="text-secondary mb-0">Ainda não há resenhas publicadas.</p>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 {% endblock %}

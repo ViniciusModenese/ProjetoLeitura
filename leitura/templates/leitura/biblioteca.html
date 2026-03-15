@@ -1,0 +1,73 @@
+{% extends 'leitura/base.html' %}
+
+{% block title %}Biblioteca - EstanteAberta{% endblock %}
+{% block page_container_class %}container-fluid px-lg-4 px-2 mt-3{% endblock %}
+
+{% block content %}
+<style>
+    .library-shell {
+        max-width: none;
+        width: 100%;
+        margin: 0 auto 30px;
+    }
+
+    .book-grid-card {
+        background-color: #1e1e1e;
+        transition: 0.28s;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .book-grid-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(0, 212, 255, 0.35);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+    }
+
+    .library-title {
+        color: #f5f7ff;
+        font-size: clamp(1.9rem, 2.1vw, 2.4rem);
+        font-weight: 800;
+        margin-bottom: 0;
+    }
+
+    .book-grid-card .card-title {
+        font-size: 1.3rem;
+    }
+
+    .book-grid-card .card-text {
+        font-size: 1rem;
+    }
+</style>
+
+<div class="library-shell">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="library-title">Biblioteca</h2>
+        <span class="text-secondary" style="font-size: 1rem;">{{ livros|length }} livro{{ livros|length|pluralize }}</span>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+        {% for livro in livros %}
+            <div class="col">
+                <div class="card h-100 shadow border-0 book-grid-card">
+                    {% if livro.capa %}
+                        <img src="{{ livro.capa.url }}" class="card-img-top" alt="{{ livro.titulo }}" style="height: 440px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title text-info">{{ livro.titulo }}</h5>
+                        <p class="card-text text-secondary">Autor: {{ livro.autor }}</p>
+                        <p class="card-text text-light">{{ livro.sinopse|truncatewords:20 }}</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 pb-3">
+                        <a href="{% url 'detalhes_livro' livro.pk %}" class="btn w-100 fw-bold" style="background-color: #00d4ff; color: #121212;">Ler Resenhas</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-dark border-secondary text-center py-5 mb-0">Ainda nao ha livros cadastrados na biblioteca.</div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -6,77 +6,337 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}EstanteAberta{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
     <style>
-        body { background-color: #121212; color: white; padding-top: 70px; }
-        .navbar { background-color: #1e1e1e !important; border-bottom: 1px solid #333; }
-        .nav-link { color: #aaa !important; transition: 0.3s; }
-        .nav-link:hover { color: #00d4ff !important; }
-        .navbar-brand { font-weight: bold; color: #00d4ff !important; }
-        .btn-auth { background-color: #00d4ff; color: #121212; font-weight: bold; border-radius: 20px; padding: 5px 20px; }
-        
-        /* Estilo para o bloco de XP clicável na Navbar */
-        .nav-xp-block { 
-            background: #2c2c2c; 
-            padding: 5px 15px; 
-            border-radius: 20px; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px;
-            text-decoration: none !important;
-            transition: 0.3s;
-            border: 1px solid #444;
+        :root {
+            --bg-main: #0a1020;
+            --bg-panel: #131d35;
+            --bg-panel-soft: #182646;
+            --bg-hover: #22345f;
+            --text-main: #e8efff;
+            --text-muted: #8da0c9;
+            --accent: #00d4ff;
+            --border-soft: rgba(255, 255, 255, 0.08);
+            --sidebar-width: 280px;
         }
-        .nav-xp-block:hover { background: #3d3d3d; border-color: #00d4ff; }
-        .nav-badge-icon { width: 22px; height: 22px; object-fit: contain; }
+
+        body {
+            background:
+                radial-gradient(circle at 20% -20%, #1a2d57 0%, rgba(26, 45, 87, 0) 40%),
+                radial-gradient(circle at 100% 0, #1b3657 0%, rgba(27, 54, 87, 0) 35%),
+                var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        .top-nav-mobile {
+            background-color: #111a2f;
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        .hamburger-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text-main);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .hamburger-btn i {
+            font-size: 1.2rem;
+        }
+
+        .brand {
+            font-weight: 800;
+            color: var(--accent);
+            text-decoration: none;
+            letter-spacing: 0.2px;
+            font-size: 1.15rem;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .brand-logo {
+            width: 192px;
+            height: 192px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .app-shell {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #0f1930 0%, #0b1428 100%);
+            border-right: 1px solid var(--border-soft);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            padding: 22px 16px;
+            z-index: 1030;
+        }
+
+        .sidebar-header {
+            margin-bottom: 26px;
+            padding: 8px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 7px;
+            font-weight: 600;
+            transition: 0.2s;
+            font-size: 1.24rem;
+        }
+
+        .nav-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            color: #9ec5ff;
+            background: rgba(102, 242, 255, 0.08);
+            border: 1px solid rgba(102, 242, 255, 0.12);
+            flex-shrink: 0;
+        }
+
+        .sidebar-link:hover .nav-icon,
+        .sidebar-link.active .nav-icon {
+            color: #b8f8ff;
+            background: rgba(102, 242, 255, 0.2);
+            border-color: rgba(102, 242, 255, 0.25);
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            color: var(--accent);
+            background-color: rgba(0, 212, 255, 0.08);
+        }
+
+        .sidebar-cta {
+            display: block;
+            text-align: center;
+            border-radius: 12px;
+            margin-top: 12px;
+            text-decoration: none;
+            background-color: var(--accent);
+            color: #061126;
+            font-weight: 800;
+            padding: 12px 14px;
+            font-size: 1.18rem;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-soft);
+        }
+
+        .app-main {
+            flex: 1;
+            width: 100%;
+        }
+
+        .app-topbar {
+            background-color: rgba(11, 18, 35, 0.8);
+            backdrop-filter: blur(6px);
+            border-bottom: 1px solid var(--border-soft);
+            padding: 12px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.02rem;
+        }
+
+        .user-chip {
+            background-color: var(--bg-panel-soft);
+            border: 1px solid var(--border-soft);
+            border-radius: 999px;
+            padding: 6px 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        .sidebar-bottom .small {
+            font-size: 0.92rem;
+        }
+
+        .offcanvas.mobile-menu {
+            background: linear-gradient(180deg, #0f1930 0%, #0b1428 100%);
+            color: var(--text-main);
+            border-right: 1px solid var(--border-soft);
+            width: min(86vw, 320px);
+        }
+
+        .offcanvas.mobile-menu .offcanvas-header {
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        .offcanvas.mobile-menu .btn-close {
+            filter: invert(1) contrast(120%);
+        }
+
+        .content-wrap {
+            padding: 22px;
+        }
+
+        @media (min-width: 992px) {
+            .app-main {
+                margin-left: var(--sidebar-width);
+            }
+
+            .top-nav-mobile {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
-
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">📚 EstanteAberta</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center gap-2">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'home' %}">Home</a>
-                    </li>
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a href="#" class="nav-xp-block ms-lg-2">
-                                <span class="text-info fw-bold" style="font-size: 0.85rem;">⭐ {{ user.perfil.xp }} XP</span>
-                                {% with ultima_badge=user.perfil.badges.all.last %}
-                                    {% if ultima_badge and ultima_badge.imagem %}
-                                        <img src="{{ ultima_badge.imagem.url }}" class="nav-badge-icon" title="{{ ultima_badge.nome }}">
-                                    {% endif %}
-                                {% endwith %}
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <form action="{% url 'logout' %}" method="post" class="d-inline">
-                                {% csrf_token %}
-                                <button type="submit" class="nav-link btn btn-link" style="text-decoration:none;">Sair ({{ user.username }})</button>
-                            </form>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Login</a>
-                        </li>
-                        <li class="nav-item ms-lg-2">
-                            <a class="nav-link btn-auth" href="{% url 'cadastro' %}">Cadastrar</a>
-                        </li>
-                    {% endif %}
-                </ul>
+    <nav class="navbar navbar-dark top-nav-mobile">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center gap-2">
+                <button class="hamburger-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar" aria-label="Abrir menu">
+                    <i class="bi bi-list"></i>
+                </button>
+                <a class="brand" href="{% url 'home' %}">
+                    <img src="{% static 'img/logo.png' %}?v=2" alt="Logo EstanteAberta" class="brand-logo">
+                </a>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                {% if user.is_authenticated %}
+                    <span class="text-info small">⭐ {{ user.perfil.xp }} XP</span>
+                    <form action="{% url 'logout' %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-info">Sair</button>
+                    </form>
+                {% else %}
+                    <a class="btn btn-sm btn-outline-info" href="{% url 'login' %}">Login</a>
+                {% endif %}
             </div>
         </div>
     </nav>
 
-    <div class="container mt-4">
-        {% block content %}
-        {% endblock %}
+    <div class="offcanvas offcanvas-start mobile-menu" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title brand mb-0" id="mobileSidebarLabel">
+                <img src="{% static 'img/logo.png' %}?v=2" alt="Logo EstanteAberta" class="brand-logo">
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <a class="sidebar-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}" data-bs-dismiss="offcanvas">
+                <span class="nav-icon"><i class="bi bi-grid-1x2-fill"></i></span>
+                <span>Dashboard</span>
+            </a>
+            <a class="sidebar-link {% if request.path == '/biblioteca/' %}active{% endif %}" href="{% url 'biblioteca' %}" data-bs-dismiss="offcanvas">
+                <span class="nav-icon"><i class="bi bi-collection-fill"></i></span>
+                <span>Biblioteca</span>
+            </a>
+            <a class="sidebar-link" href="{% url 'home' %}" data-bs-dismiss="offcanvas">
+                <span class="nav-icon"><i class="bi bi-bullseye"></i></span>
+                <span>Minhas Metas</span>
+            </a>
+            {% if user.is_authenticated %}
+                <a class="sidebar-cta {% if request.path == '/livros/novo/' %}active{% endif %}" href="{% url 'cadastrar_livro' %}" data-bs-dismiss="offcanvas">Cadastrar Novo Livro</a>
+            {% endif %}
+
+            <div class="sidebar-bottom mt-auto">
+                {% if user.is_authenticated %}
+                    <div class="small text-secondary mb-2">Conectado como {{ user.username }}</div>
+                    <form action="{% url 'logout' %}" method="post" class="d-grid">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-info btn-sm">Sair</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-info btn-sm w-100 mb-2" data-bs-dismiss="offcanvas">Login</a>
+                    <a href="{% url 'cadastro' %}" class="btn btn-info btn-sm w-100" data-bs-dismiss="offcanvas">Criar conta</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="app-shell">
+        <aside class="sidebar d-none d-lg-flex flex-column">
+            <div class="sidebar-header">
+                <a class="brand" href="{% url 'home' %}">
+                    <img src="{% static 'img/logo.png' %}?v=2" alt="Logo EstanteAberta" class="brand-logo">
+                </a>
+            </div>
+
+            <a class="sidebar-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">
+                <span class="nav-icon"><i class="bi bi-grid-1x2-fill"></i></span>
+                <span>Dashboard</span>
+            </a>
+            <a class="sidebar-link {% if request.path == '/biblioteca/' %}active{% endif %}" href="{% url 'biblioteca' %}">
+                <span class="nav-icon"><i class="bi bi-collection-fill"></i></span>
+                <span>Biblioteca</span>
+            </a>
+            <a class="sidebar-link" href="{% url 'home' %}">
+                <span class="nav-icon"><i class="bi bi-bullseye"></i></span>
+                <span>Minhas Metas</span>
+            </a>
+            {% if user.is_authenticated %}
+                <a class="sidebar-cta {% if request.path == '/livros/novo/' %}active{% endif %}" href="{% url 'cadastrar_livro' %}">Cadastrar Novo Livro</a>
+            {% endif %}
+
+            <div class="sidebar-bottom">
+                {% if user.is_authenticated %}
+                    <div class="small text-secondary mb-2">Conectado como {{ user.username }}</div>
+                    <form action="{% url 'logout' %}" method="post" class="d-grid">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-info btn-sm">Sair</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-info btn-sm w-100 mb-2">Login</a>
+                    <a href="{% url 'cadastro' %}" class="btn btn-info btn-sm w-100">Criar conta</a>
+                {% endif %}
+            </div>
+        </aside>
+
+        <main class="app-main">
+            <header class="app-topbar d-none d-lg-flex">
+                <div class="fw-semibold">Dashboard</div>
+                {% if user.is_authenticated %}
+                    <a href="#" class="user-chip">
+                        <span>{{ user.username }}</span>
+                        <span class="text-info">⭐ {{ user.perfil.xp }} XP</span>
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="user-chip">Entrar</a>
+                {% endif %}
+            </header>
+
+            <div class="{% block page_container_class %}content-wrap{% endblock %}">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

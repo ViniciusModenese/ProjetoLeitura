@@ -1,4 +1,5 @@
 {% extends 'leitura/base.html' %}
+{% load leitura_extras %}
 
 {% block title %}{{ livro.titulo }} - EstanteAberta{% endblock %}
 
@@ -30,8 +31,16 @@
         margin: 0;
     }
 
-    .star-rating { color: #ffc107; font-size: 1.1rem; white-space: nowrap; }
-    .star-muted { color: #444; }
+    .star-rating { font-size: 1.4rem; white-space: nowrap; letter-spacing: 3px; line-height: 1; }
+    .star-filled {
+        display: inline-block;
+        background: linear-gradient(175deg, #fff59d 0%, #ffd600 45%, #f5a623 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        filter: drop-shadow(0 1px 4px rgba(255, 185, 0, 0.6));
+    }
+    .star-empty { color: #3a3a50; }
 
     /* Corpo da Resenha (Comentário e Badge) */
     .resenha-body {
@@ -62,18 +71,20 @@
         <h1 class="text-info fw-bold display-5">{{ livro.titulo }}</h1>
         <p class="lead text-secondary">Por: {{ livro.autor }}</p>
         
-        <div class="d-flex align-items-center gap-3 mt-4">
-            <div class="bg-dark border border-info px-3 py-2 rounded-pill">
-                <span class="text-info fw-bold">⭐ {{ user.perfil.xp }} XP</span>
+        {% if user.is_authenticated %}
+            <div class="d-flex align-items-center gap-3 mt-4">
+                <div class="bg-dark border border-info px-3 py-2 rounded-pill">
+                    <span class="text-info fw-bold">⭐ {{ user.perfil.xp }} XP</span>
+                </div>
+                <div class="d-flex gap-2">
+                    {% for badge in user.perfil.badges.all %}
+                        {% if badge.imagem %}
+                            <img src="{{ badge.imagem.url }}" class="badge-img" title="{{ badge.nome }}: {{ badge.descricao }}" data-bs-toggle="tooltip">
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </div>
-            <div class="d-flex gap-2">
-                {% for badge in user.perfil.badges.all %}
-                    {% if badge.imagem %}
-                        <img src="{{ badge.imagem.url }}" class="badge-img" title="{{ badge.nome }}: {{ badge.descricao }}" data-bs-toggle="tooltip">
-                    {% endif %}
-                {% endfor %}
-            </div>
-        </div>
+        {% endif %}
         <hr class="bg-secondary my-4" style="opacity: 0.2;">
         <h5 class="text-info">Sinopse:</h5>
         <p class="text-light" style="line-height: 1.8;">{{ livro.sinopse }}</p>
@@ -91,6 +102,10 @@
                     <div class="mb-3"><label class="form-label text-secondary">Sua nota:</label>{{ form.nota }}</div>
                     <button type="submit" class="btn btn-info w-100 fw-bold py-2 mt-2" style="color: #121212;">Publicar e Ganhar +10 XP</button>
                 </form>
+            {% else %}
+                <div class="alert alert-dark border-secondary mb-0">
+                    Faça <a href="{% url 'login' %}" class="text-info text-decoration-none">login</a> para escrever uma resenha.
+                </div>
             {% endif %}
         </div>
 
@@ -102,13 +117,11 @@
                 <div class="resenha-header">
                     <span class="username-comment">{{ resenha.usuario.username }}</span>
                     <div class="star-rating">
-                        {% for i in "12345" %}
-                            {% if resenha.nota >= forloop.counter %}
-                                <i class="fas fa-star"></i>
-                            {% else %}
-                                <i class="fas fa-star star-muted"></i>
-                            {% endif %}
-                        {% endfor %}
+                        <i class="bi {{ resenha.nota|star_classes:1 }}"></i>
+                        <i class="bi {{ resenha.nota|star_classes:2 }}"></i>
+                        <i class="bi {{ resenha.nota|star_classes:3 }}"></i>
+                        <i class="bi {{ resenha.nota|star_classes:4 }}"></i>
+                        <i class="bi {{ resenha.nota|star_classes:5 }}"></i>
                     </div>
                 </div>
 
