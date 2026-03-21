@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 from .models import Livro, Resenha, Perfil
 
 class ResenhaForm(forms.ModelForm):
@@ -60,13 +61,31 @@ class EditarPerfilForm(forms.ModelForm):
 
     class Meta:
         model = Perfil
-        fields = ['foto_perfil']
+        fields = ['foto_perfil', 'meta_livros_ano', 'meta_resenhas', 'livros_lidos']
         labels = {
             'foto_perfil': 'Foto de Perfil',
+            'meta_livros_ano': 'Meta de livros no ano',
+            'meta_resenhas': 'Meta de resenhas',
+            'livros_lidos': 'Livros lidos',
         }
         widgets = {
             'foto_perfil': forms.FileInput(attrs={'class': 'form-control modern-file-input', 'accept': 'image/*'}),
+            'meta_livros_ano': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
+            'meta_resenhas': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
+            'livros_lidos': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
         }
+
+    def clean_meta_livros_ano(self):
+        valor = self.cleaned_data.get('meta_livros_ano')
+        return max(1, valor or 1)
+
+    def clean_meta_resenhas(self):
+        valor = self.cleaned_data.get('meta_resenhas')
+        return max(1, valor or 1)
+
+    def clean_livros_lidos(self):
+        valor = self.cleaned_data.get('livros_lidos')
+        return max(0, valor or 0)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -114,3 +133,32 @@ class AlterarSenhaForm(forms.Form):
             raise forms.ValidationError('As novas senhas não coincidem.')
 
         return cleaned_data
+
+
+class CadastroUsuarioForm(UserCreationForm):
+    meta_livros_ano = forms.IntegerField(
+        label='Meta de livros no ano',
+        min_value=1,
+        initial=12,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
+        help_text='Defina sua meta anual de leitura.',
+    )
+    livros_lidos = forms.IntegerField(
+        label='Livros lidos',
+        min_value=0,
+        initial=0,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+        help_text='Informe quantos livros voce ja leu neste ano.',
+    )
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ('username', 'password1', 'password2', 'meta_livros_ano', 'livros_lidos')
+
+    def save(self, commit=True):
+        user = super().save(commit=commit)
+        if commit:
+            user.perfil.meta_livros_ano = self.cleaned_data.get('meta_livros_ano', 12)
+            user.perfil.livros_lidos = self.cleaned_data.get('livros_lidos', 0)
+            user.perfil.save(update_fields=['meta_livros_ano', 'livros_lidos'])
+        return user

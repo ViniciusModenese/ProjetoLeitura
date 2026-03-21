@@ -63,6 +63,7 @@
             0 0 0 8px rgba(88, 166, 255, 0.08),
             0 12px 28px rgba(0, 0, 0, 0.35),
             0 0 24px rgba(88, 166, 255, 0.2);
+        transition: transform 0.28s ease, box-shadow 0.28s ease;
     }
 
     .xp-ring::before {
@@ -72,6 +73,7 @@
         border-radius: 50%;
         background: radial-gradient(circle at 35% 30%, var(--bg-panel-soft) 0, var(--bg-main) 60%, var(--bg-main) 100%);
         box-shadow: inset 0 0 0 1px rgba(200, 208, 216, 0.1), inset 0 12px 30px rgba(88, 166, 255, 0.05);
+        transition: box-shadow 0.28s ease;
     }
 
     .xp-ring::after {
@@ -81,6 +83,23 @@
         border-radius: 50%;
         border: 1px solid rgba(88, 166, 255, 0.15);
         pointer-events: none;
+        transition: border-color 0.28s ease;
+    }
+
+    .progress-gadget:hover .xp-ring {
+        transform: scale(1.05);
+        box-shadow:
+            0 0 0 10px rgba(88, 166, 255, 0.12),
+            0 16px 34px rgba(0, 0, 0, 0.4),
+            0 0 34px rgba(88, 166, 255, 0.35);
+    }
+
+    .progress-gadget:hover .xp-ring::before {
+        box-shadow: inset 0 0 0 1px rgba(200, 208, 216, 0.18), inset 0 14px 36px rgba(88, 166, 255, 0.12);
+    }
+
+    .progress-gadget:hover .xp-ring::after {
+        border-color: rgba(121, 192, 255, 0.45);
     }
 
     .xp-ring-center {
@@ -276,12 +295,12 @@
     }
 
     .review-item .text-info {
-        font-size: 1.28rem;
+        font-size: 1.42rem;
         color: var(--accent-alt) !important;
     }
 
     .review-item .small {
-        font-size: 1.14rem !important;
+        font-size: 1.22rem !important;
     }
 
     .review-item .star-line {
@@ -291,6 +310,8 @@
     .review-quote {
         color: var(--text-main);
         opacity: 0.9;
+        font-size: 1.16rem;
+        line-height: 1.55;
     }
 
     .usuario-resenha {

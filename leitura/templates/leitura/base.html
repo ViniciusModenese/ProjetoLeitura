@@ -43,8 +43,8 @@
             --text-subtle: #374151;
             --accent: #0969da;
             --accent-light: #1f6feb;
-            --accent-alt: #b54708;
-            --accent-alt-light: #dc6803;
+            --accent-alt: #111827;
+            --accent-alt-light: #1f2937;
             --success: #1a7f37;
             --danger: #d1242f;
             --border-soft: rgba(31, 35, 40, 0.15);
@@ -185,13 +185,17 @@
             font-weight: 800;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: var(--accent-alt);
+            color: var(--text-main);
             line-height: 1;
         }
 
         @media (max-width: 991.98px) {
             .brand-wordmark {
                 font-size: 1.2rem;
+            }
+
+            .brand-logo {
+                display: none;
             }
         }
 
@@ -200,7 +204,17 @@
         }
 
         .brand:hover .brand-wordmark {
-            color: var(--accent-alt-light);
+            color: var(--accent-light);
+        }
+
+        .topbar-brand-link {
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .topbar-brand-link:hover .brand-wordmark {
+            color: var(--accent-light);
         }
 
         .brand-logo {
@@ -306,7 +320,6 @@
             flex: 1;
             width: 100%;
             position: relative;
-            isolation: isolate;
             overflow: hidden;
         }
 
@@ -347,10 +360,6 @@
             align-items: center;
             font-size: 1.02rem;
             transition: background-color 0.3s, border-color 0.3s;
-        }
-
-        .app-topbar .fw-semibold {
-            color: var(--accent-alt);
         }
 
         .user-chip {
@@ -457,7 +466,6 @@
                     <i class="bi bi-list"></i>
                 </button>
                 <a class="brand" href="{% url 'home' %}">
-                    <span class="brand-wordmark">Estante Aberta</span>
                     <img src="{% static 'img/logo.png' %}?v=2" alt="Logo EstanteAberta" class="brand-logo">
                 </a>
             </div>
@@ -481,7 +489,6 @@
     <div class="offcanvas offcanvas-start mobile-menu" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title brand mb-0" id="mobileSidebarLabel">
-                <span class="brand-wordmark">Estante Aberta</span>
                 <img src="{% static 'img/logo.png' %}?v=2" alt="Logo EstanteAberta" class="brand-logo">
             </h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
@@ -495,7 +502,7 @@
                 <span class="nav-icon"><i class="bi bi-collection-fill"></i></span>
                 <span>Biblioteca</span>
             </a>
-            <a class="sidebar-link" href="{% url 'home' %}" data-bs-dismiss="offcanvas">
+            <a class="sidebar-link {% if request.path == '/metas/' %}active{% endif %}" href="{% url 'minhas_metas' %}" data-bs-dismiss="offcanvas">
                 <span class="nav-icon"><i class="bi bi-bullseye"></i></span>
                 <span>Minhas Metas</span>
             </a>
@@ -522,7 +529,6 @@
         <aside class="sidebar d-none d-lg-flex flex-column">
             <div class="sidebar-header">
                 <a class="brand" href="{% url 'home' %}">
-                    <span class="brand-wordmark">Estante Aberta</span>
                     <img src="{% static 'img/logo.png' %}?v=2" alt="Logo EstanteAberta" class="brand-logo">
                 </a>
             </div>
@@ -535,7 +541,7 @@
                 <span class="nav-icon"><i class="bi bi-collection-fill"></i></span>
                 <span>Biblioteca</span>
             </a>
-            <a class="sidebar-link" href="{% url 'home' %}">
+            <a class="sidebar-link {% if request.path == '/metas/' %}active{% endif %}" href="{% url 'minhas_metas' %}">
                 <span class="nav-icon"><i class="bi bi-bullseye"></i></span>
                 <span>Minhas Metas</span>
             </a>
@@ -566,7 +572,9 @@
 
         <main class="app-main">
             <header class="app-topbar d-none d-lg-flex">
-                <div class="fw-semibold">Dashboard</div>
+                <a href="{% url 'home' %}" class="topbar-brand-link">
+                    <span class="brand-wordmark">Estante Aberta</span>
+                </a>
                 <div class="d-flex align-items-center gap-2">
                     <button type="button" class="theme-toggle-btn" id="themeToggleBtnDesktop" title="Alternar tema">
                         <i class="bi bi-moon-fill"></i>

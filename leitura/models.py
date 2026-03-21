@@ -7,6 +7,7 @@ class Livro(models.Model):
     titulo = models.CharField(max_length=200)
     autor = models.CharField(max_length=150)
     sinopse = models.TextField()
+    criador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='livros_adicionados')
     capa = models.ImageField(upload_to='capas/') 
     data_cadastro = models.DateTimeField(auto_now_add=True)
 
@@ -37,6 +38,8 @@ class Perfil(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
     xp = models.IntegerField(default=0)
     livros_lidos = models.IntegerField(default=0)
+    meta_livros_ano = models.PositiveIntegerField(default=12)
+    meta_resenhas = models.PositiveIntegerField(default=50)
     badges = models.ManyToManyField(Badge, blank=True)
     foto_perfil = models.ImageField(upload_to='perfis/', null=True, blank=True)
 

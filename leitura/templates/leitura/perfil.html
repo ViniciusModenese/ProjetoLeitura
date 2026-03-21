@@ -69,6 +69,41 @@
         flex-wrap: wrap;
     }
 
+    .stats-actions {
+        display: flex;
+        align-items: stretch;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .stats-actions .stats-row {
+        flex: 1;
+        margin: 0;
+    }
+
+    .btn-metas {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-width: 176px;
+        border-radius: 10px;
+        border: 1px solid var(--accent);
+        background: rgba(88, 166, 255, 0.1);
+        color: var(--accent-light);
+        font-weight: 800;
+        text-decoration: none;
+        padding: 12px 16px;
+        transition: 0.2s;
+    }
+
+    .btn-metas:hover {
+        background: var(--accent);
+        color: #ffffff;
+        border-color: var(--accent-light);
+        transform: translateY(-1px);
+    }
+
     .stat-item {
         background: rgba(88, 166, 255, 0.08);
         border: 1px solid rgba(88, 166, 255, 0.2);
@@ -92,6 +127,16 @@
         margin-top: 8px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        width: 100%;
+    }
+
+    .stat-label i {
+        font-size: 0.8rem;
+        line-height: 1;
     }
 
     .perfil-panel {
@@ -223,16 +268,33 @@
     }
 
     .badges-container {
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+        gap: 14px;
     }
 
     .badge-item {
+        position: relative;
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 8px;
+        padding: 10px 8px;
+        border-radius: 12px;
+        background: rgba(88, 166, 255, 0.06);
+        border: 1px solid var(--border-soft);
+        min-height: 132px;
+    }
+
+    .badge-openable {
+        cursor: pointer;
+        transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .badge-openable:hover {
+        transform: translateY(-3px);
+        border-color: var(--accent);
+        box-shadow: 0 8px 20px rgba(88, 166, 255, 0.18);
     }
 
     .badge-img {
@@ -247,12 +309,119 @@
         transform: scale(1.1);
     }
 
+    .badge-item.locked {
+        background: rgba(255, 255, 255, 0.03);
+        border-color: rgba(128, 138, 150, 0.28);
+    }
+
+    .badge-item.locked .badge-img {
+        filter: grayscale(1) brightness(0.45) contrast(0.9);
+        opacity: 0.78;
+    }
+
+    .badge-lock {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: rgba(13, 17, 23, 0.7);
+        border: 1px solid var(--border-soft);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-subtle);
+        font-size: 0.78rem;
+    }
+
+    .badge-locked-text {
+        color: var(--text-subtle);
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-align: center;
+        line-height: 1.25;
+    }
+
+    .badge-gallery-modal .modal-content {
+        background: var(--bg-panel);
+        border: 1px solid var(--border-soft);
+        color: var(--text-main);
+    }
+
+    .badge-gallery-modal .modal-dialog {
+        max-width: 920px;
+    }
+
+    .badge-gallery-modal {
+        z-index: 2000 !important;
+    }
+
+    .modal-backdrop.show {
+        z-index: 1990 !important;
+    }
+
+    .badge-gallery-modal .modal-header,
+    .badge-gallery-modal .modal-footer {
+        border-color: var(--border-soft);
+    }
+
+    .badge-gallery-image-wrap {
+        background: var(--bg-panel-soft);
+        border: 1px solid var(--border-soft);
+        border-radius: 14px;
+        min-height: 330px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+        overflow: hidden;
+    }
+
+    .badge-gallery-image-wrap img {
+        width: 250px;
+        height: 250px;
+        object-fit: contain;
+        filter: drop-shadow(0 0 14px rgba(88, 166, 255, 0.25));
+        transition: transform 0.28s ease, filter 0.28s ease;
+    }
+
+    .badge-gallery-image-wrap:hover img {
+        transform: scale(1.08);
+        filter: drop-shadow(0 0 24px rgba(88, 166, 255, 0.35));
+    }
+
+    .badge-gallery-name {
+        font-size: 1.2rem;
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+
+    .badge-gallery-desc {
+        color: var(--text-muted);
+        line-height: 1.5;
+        margin-bottom: 8px;
+    }
+
+    .badge-gallery-status {
+        font-size: 0.9rem;
+        font-weight: 700;
+    }
+
+    .badge-gallery-status.unlocked {
+        color: var(--success);
+    }
+
+    .badge-gallery-status.locked {
+        color: var(--text-subtle);
+    }
+
     .badge-name {
         color: var(--text-main);
         font-weight: 700;
         font-size: 0.85rem;
         text-align: center;
-        max-width: 80px;
+        max-width: 96px;
         line-height: 1.1;
     }
 
@@ -339,6 +508,14 @@
             flex: 1 1 calc(50% - 10px);
             min-width: unset;
         }
+
+        .stats-actions {
+            justify-content: center;
+        }
+
+        .btn-metas {
+            width: 100%;
+        }
     }
 </style>
 
@@ -363,39 +540,86 @@
             <h2>{{ user.get_full_name|default:user.username }}</h2>
             <p>{{ user.email }}</p>
             
-            <div class="stats-row">
-                <div class="stat-item">
-                    <div class="stat-value">{{ perfil.xp }}</div>
-                    <div class="stat-label"><i class="bi bi-lightning-charge-fill"></i> XP Total</div>
+            <div class="stats-actions">
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-value">{{ perfil.xp }}</div>
+                        <div class="stat-label"><i class="bi bi-lightning-charge-fill"></i> XP Total</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ resenhas_count }}</div>
+                        <div class="stat-label"><i class="bi bi-chat-quote-fill"></i> Resenhas</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ livros_adicionados_count }}</div>
+                        <div class="stat-label"><i class="bi bi-journal-plus"></i> Livros Adicionados</div>
+                    </div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value">{{ perfil.badges.count }}</div>
-                    <div class="stat-label"><i class="bi bi-award-fill"></i> Medalhas</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">{{ perfil.livros_lidos }}</div>
-                    <div class="stat-label"><i class="bi bi-book-half"></i> Lidos</div>
-                </div>
+                <a href="{% url 'minhas_metas' %}" class="btn-metas">
+                    <i class="bi bi-bullseye"></i>
+                    Minhas Metas
+                </a>
             </div>
         </div>
     </div>
 
     <!-- Medalhas Desbloqueadas -->
-    {% if perfil.badges.all %}
-        <div class="perfil-panel">
-            <h3><i class="bi bi-trophy-fill"></i> Medalhas Desbloqueadas</h3>
-            <div class="badges-container">
-                {% for badge in perfil.badges.all %}
-                    <div class="badge-item">
-                        {% if badge.imagem %}
-                            <img src="{{ badge.imagem.url }}" alt="{{ badge.nome }}" class="badge-img" title="{{ badge.descricao }}" data-bs-toggle="tooltip">
-                        {% endif %}
-                        <div class="badge-name">{{ badge.nome }}</div>
+    <div class="perfil-panel">
+        <h3><i class="bi bi-trophy-fill"></i> Medalhas</h3>
+        <div class="badges-container">
+            {% for badge in all_badges %}
+                {% if badge %}
+                    {% if badge.id in owned_badge_ids %}
+                        <div class="badge-item badge-openable" data-badge-name="{{ badge.nome }}" data-badge-desc="{{ badge.descricao }}" data-badge-img="{% if badge.imagem %}{{ badge.imagem.url }}{% endif %}" data-badge-locked="0" data-badge-xp="{{ badge.xp_minimo }}">
+                            {% if badge.imagem %}
+                                <img src="{{ badge.imagem.url }}" alt="{{ badge.nome }}" class="badge-img" title="{{ badge.descricao }}" data-bs-toggle="tooltip">
+                            {% endif %}
+                            <div class="badge-name">{{ badge.nome }}</div>
+                        </div>
+                    {% else %}
+                        <div class="badge-item locked badge-openable" title="{{ badge.descricao }}" data-badge-name="{{ badge.nome }}" data-badge-desc="{{ badge.descricao }}" data-badge-img="{% if badge.imagem %}{{ badge.imagem.url }}{% endif %}" data-badge-locked="1" data-badge-xp="{{ badge.xp_minimo }}">
+                            <span class="badge-lock"><i class="bi bi-lock-fill"></i></span>
+                            {% if badge.imagem %}
+                                <img src="{{ badge.imagem.url }}" alt="{{ badge.nome }}" class="badge-img">
+                            {% endif %}
+                            <div class="badge-name">{{ badge.nome }}</div>
+                            <div class="badge-locked-text">Desbloqueia em {{ badge.xp_minimo }} XP</div>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="badge-item locked">
+                        <span class="badge-lock"><i class="bi bi-lock-fill"></i></span>
+                        <div class="badge-img" style="display:flex;align-items:center;justify-content:center;color:var(--text-subtle);font-size:1.4rem;">?</div>
+                        <div class="badge-name">Em breve</div>
+                        <div class="badge-locked-text">Slot reservado</div>
                     </div>
-                {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="modal fade badge-gallery-modal" id="badgeGalleryModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-images me-2"></i>Galeria de Medalhas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="badge-gallery-image-wrap" id="badgeGalleryImageWrap">
+                        <img id="badgeGalleryImage" src="" alt="Medalha">
+                    </div>
+                    <div class="badge-gallery-name" id="badgeGalleryName"></div>
+                    <div class="badge-gallery-desc" id="badgeGalleryDesc"></div>
+                    <div class="badge-gallery-status" id="badgeGalleryStatus"></div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-info" id="badgeGalleryPrev"><i class="bi bi-chevron-left me-1"></i>Anterior</button>
+                    <button type="button" class="btn btn-outline-info" id="badgeGalleryNext">Próxima<i class="bi bi-chevron-right ms-1"></i></button>
+                </div>
             </div>
         </div>
-    {% endif %}
+    </div>
 
     <!-- Editar Perfil -->
     <div class="perfil-panel">
@@ -418,6 +642,36 @@
                 {% if form_perfil.email.errors %}
                     {{ form_perfil.email.errors }}
                 {% endif %}
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <div class="form-group mb-0">
+                        {{ form_perfil.meta_livros_ano.label_tag }}
+                        {{ form_perfil.meta_livros_ano }}
+                        {% if form_perfil.meta_livros_ano.errors %}
+                            {{ form_perfil.meta_livros_ano.errors }}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-0">
+                        {{ form_perfil.meta_resenhas.label_tag }}
+                        {{ form_perfil.meta_resenhas }}
+                        {% if form_perfil.meta_resenhas.errors %}
+                            {{ form_perfil.meta_resenhas.errors }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form_perfil.livros_lidos.label_tag }}
+                {{ form_perfil.livros_lidos }}
+                {% if form_perfil.livros_lidos.errors %}
+                    {{ form_perfil.livros_lidos.errors }}
+                {% endif %}
+                <small class="form-text">Informe quantos livros você já leu. Esse valor entra no cálculo da meta anual.</small>
             </div>
 
             <div class="form-group">
@@ -574,6 +828,86 @@
                     }
 
                     updateFotoPerfil(file)
+                })
+            }
+        }
+
+        // Galeria das medalhas
+        const badgeItems = Array.from(document.querySelectorAll('.badge-openable'))
+        const badgeModalEl = document.getElementById('badgeGalleryModal')
+
+        if (badgeItems.length && badgeModalEl && window.bootstrap && bootstrap.Modal) {
+            // Move o modal para o body para evitar conflitos de camada/z-index.
+            if (badgeModalEl.parentElement !== document.body) {
+                document.body.appendChild(badgeModalEl)
+            }
+
+            const badgeModal = new bootstrap.Modal(badgeModalEl, {
+                backdrop: true,
+                keyboard: true,
+                focus: true,
+            })
+            const badgeGalleryImageWrap = document.getElementById('badgeGalleryImageWrap')
+            const badgeGalleryImage = document.getElementById('badgeGalleryImage')
+            const badgeGalleryName = document.getElementById('badgeGalleryName')
+            const badgeGalleryDesc = document.getElementById('badgeGalleryDesc')
+            const badgeGalleryStatus = document.getElementById('badgeGalleryStatus')
+            const badgeGalleryPrev = document.getElementById('badgeGalleryPrev')
+            const badgeGalleryNext = document.getElementById('badgeGalleryNext')
+
+            let currentBadgeIndex = 0
+
+            function renderBadge(index) {
+                const item = badgeItems[index]
+                const name = item.getAttribute('data-badge-name') || 'Medalha'
+                const desc = item.getAttribute('data-badge-desc') || 'Sem descrição.'
+                const img = item.getAttribute('data-badge-img') || ''
+                const locked = item.getAttribute('data-badge-locked') === '1'
+                const xp = item.getAttribute('data-badge-xp') || '0'
+
+                badgeGalleryName.textContent = name
+                badgeGalleryDesc.textContent = desc
+
+                if (img) {
+                    badgeGalleryImage.src = img
+                } else {
+                    badgeGalleryImage.src = ''
+                }
+
+                if (locked) {
+                    badgeGalleryImageWrap.classList.add('locked')
+                    badgeGalleryStatus.className = 'badge-gallery-status locked'
+                    badgeGalleryStatus.textContent = 'Bloqueada - desbloqueia em ' + xp + ' XP'
+                } else {
+                    badgeGalleryImageWrap.classList.remove('locked')
+                    badgeGalleryStatus.className = 'badge-gallery-status unlocked'
+                    badgeGalleryStatus.textContent = 'Conquistada'
+                }
+            }
+
+            function openBadge(index) {
+                currentBadgeIndex = index
+                renderBadge(currentBadgeIndex)
+                badgeModal.show()
+            }
+
+            badgeItems.forEach(function (item, index) {
+                item.addEventListener('click', function () {
+                    openBadge(index)
+                })
+            })
+
+            if (badgeGalleryPrev) {
+                badgeGalleryPrev.addEventListener('click', function () {
+                    currentBadgeIndex = (currentBadgeIndex - 1 + badgeItems.length) % badgeItems.length
+                    renderBadge(currentBadgeIndex)
+                })
+            }
+
+            if (badgeGalleryNext) {
+                badgeGalleryNext.addEventListener('click', function () {
+                    currentBadgeIndex = (currentBadgeIndex + 1) % badgeItems.length
+                    renderBadge(currentBadgeIndex)
                 })
             }
         }

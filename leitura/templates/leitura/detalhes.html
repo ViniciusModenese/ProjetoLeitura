@@ -26,7 +26,7 @@
 
     .username-comment { 
         color: var(--accent-alt) !important; 
-        font-size: 1.2rem; 
+        font-size: 1.3rem; 
         font-weight: 700; 
         margin: 0;
         display: flex;
@@ -54,7 +54,7 @@
         font-size: 0.8rem;
     }
 
-    .star-rating { font-size: 1.4rem; white-space: nowrap; letter-spacing: 3px; line-height: 1; }
+    .star-rating { font-size: 1.52rem; white-space: nowrap; letter-spacing: 3px; line-height: 1; }
     .star-filled {
         display: inline-block;
         background: linear-gradient(175deg, #fff59d 0%, #ffd600 45%, #f5a623 100%);
@@ -82,6 +82,12 @@
     /* Outros Estilos */
     .form-section { background-color: var(--bg-panel); border-radius: 12px; padding: 25px; border: 1px solid var(--border-soft); }
     .badge-img { width: 60px; height: 60px; object-fit: contain; filter: drop-shadow(0 0 8px rgba(88, 166, 255, 0.4)); }
+
+    .section-heading-icon {
+        margin-right: 8px;
+        font-size: 1.05em;
+        vertical-align: -1px;
+    }
 </style>
 
 <div class="row">
@@ -117,7 +123,7 @@
 <div class="row mt-5">
     <div class="col-lg-8 mx-auto">
         <div class="form-section mb-5 shadow">
-                <h3 class="mb-4" style="color: var(--accent-alt);">✍️ Escrever sua Resenha</h3>
+                <h3 class="mb-4" style="color: var(--accent-alt);"><i class="bi bi-pencil-square section-heading-icon"></i>Escrever sua Resenha</h3>
             {% if user.is_authenticated %}
                 <form method="post">
                     {% csrf_token %}
@@ -132,7 +138,7 @@
             {% endif %}
         </div>
 
-            <h3 class="mb-4" style="color: var(--text-main);">💬 Resenhas da Comunidade</h3>
+            <h3 class="mb-4" style="color: var(--text-main);"><i class="bi bi-chat-quote-fill section-heading-icon"></i>Resenhas da Comunidade</h3>
         
         {% for resenha in livro.resenhas.all %}
             <div class="card resenha-card shadow-sm border-0">
@@ -158,7 +164,7 @@
                 <div class="resenha-body">
                     <div class="row align-items-center">
                         <div class="col">
-                                <p class="card-text" style="color: var(--text-main); opacity: 0.9; font-size: 1.05rem; line-height: 1.6; font-style: italic; margin-bottom: 0;">
+                                <p class="card-text" style="color: var(--text-main); opacity: 0.92; font-size: 1.14rem; line-height: 1.68; font-style: italic; margin-bottom: 0;">
                                 "{{ resenha.texto }}"
                             </p>
                         </div>

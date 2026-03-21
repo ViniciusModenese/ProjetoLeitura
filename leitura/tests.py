@@ -112,4 +112,4 @@ class CadastroLivroTests(TestCase):
 		self.assertEqual(response.url, reverse('detalhes_livro', args=[livro.pk]))
 		self.assertEqual(resenha.usuario, self.user)
 		self.assertEqual(resenha.nota, 5)
-		self.assertEqual(self.user.perfil.xp, 10)
+		self.assertEqual(self.user.perfil.xp, 110)

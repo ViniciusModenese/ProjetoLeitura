@@ -1,0 +1,301 @@
+{% extends 'leitura/base.html' %}
+
+{% block title %}Minhas Metas - EstanteAberta{% endblock %}
+{% block page_container_class %}container-fluid px-lg-4 px-2 mt-3{% endblock %}
+
+{% block content %}
+<style>
+    .metas-shell {
+        max-width: 1240px;
+        margin: 0 auto 28px;
+    }
+
+    .metas-title {
+        color: var(--text-main);
+        font-size: clamp(2rem, 2.3vw, 2.6rem);
+        font-weight: 800;
+        margin-bottom: 4px;
+    }
+
+    .metas-subtitle {
+        color: var(--text-muted);
+        font-size: 1rem;
+        margin-bottom: 18px;
+    }
+
+    .metas-card {
+        background: var(--bg-panel);
+        border: 1px solid var(--border-soft);
+        border-radius: 16px;
+        box-shadow: 0 10px 32px rgba(0, 0, 0, 0.22);
+        padding: 20px;
+        height: 100%;
+    }
+
+    .card-title-metas {
+        color: var(--accent-alt);
+        font-size: 1.14rem;
+        font-weight: 800;
+        margin-bottom: 12px;
+    }
+
+    .goal-ring {
+        width: 180px;
+        height: 180px;
+        margin: 4px auto 16px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        position: relative;
+        background: conic-gradient(var(--accent) calc(var(--value) * 1%), rgba(88, 166, 255, 0.15) 0);
+    }
+
+    .goal-ring::before {
+        content: "";
+        position: absolute;
+        inset: 16px;
+        border-radius: 50%;
+        background: var(--bg-panel-soft);
+        border: 1px solid var(--border-soft);
+    }
+
+    .goal-ring-center {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+    }
+
+    .goal-ring-value {
+        color: var(--text-main);
+        font-size: 1.25rem;
+        font-weight: 800;
+        line-height: 1.1;
+    }
+
+    .goal-ring-label {
+        color: var(--text-muted);
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .goal-summary {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        line-height: 1.45;
+    }
+
+    .bars-wrap {
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: repeat(12, minmax(16px, 1fr));
+        gap: 8px;
+        align-items: end;
+        min-height: 180px;
+    }
+
+    .bar-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .bar-track {
+        width: 100%;
+        height: 140px;
+        background: var(--bg-panel-soft);
+        border: 1px solid var(--border-soft);
+        border-radius: 8px;
+        display: flex;
+        align-items: flex-end;
+        overflow: hidden;
+    }
+
+    .bar-fill {
+        width: 100%;
+        border-radius: 7px 7px 0 0;
+        background: linear-gradient(180deg, var(--accent-light), var(--accent));
+    }
+
+    .bar-fill.review {
+        background: linear-gradient(180deg, #30c58d, #1e9a6b);
+    }
+
+    .bar-label {
+        color: var(--text-subtle);
+        font-size: 0.72rem;
+        font-weight: 700;
+    }
+
+    .bar-value {
+        color: var(--text-main);
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .mini-kpis {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+    }
+
+    .mini-kpi {
+        background: var(--bg-panel-soft);
+        border: 1px solid var(--border-soft);
+        border-radius: 12px;
+        padding: 14px;
+    }
+
+    .mini-kpi-label {
+        color: var(--text-muted);
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        margin-bottom: 6px;
+    }
+
+    .mini-kpi-value {
+        color: var(--text-main);
+        font-size: 1.36rem;
+        font-weight: 800;
+    }
+
+    .hint-line {
+        margin-top: 12px;
+        color: var(--text-subtle);
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="metas-shell">
+    <h2 class="metas-title">Minhas Metas</h2>
+    <p class="metas-subtitle">Acompanhe suas metas de {{ ano_atual }} e seu ritmo de evolução.</p>
+
+    <div class="row g-3 mb-3">
+        <div class="col-lg-4">
+            <div class="metas-card">
+                <div class="card-title-metas"><i class="bi bi-journal-plus me-2"></i>Meta de Livros no Ano</div>
+                <div class="goal-ring" style="--value: {{ livros_percent }};">
+                    <div class="goal-ring-center">
+                        <div class="goal-ring-value">{{ livros_ano }}/{{ meta_livros }}</div>
+                        <div class="goal-ring-label">conclusão {{ livros_percent }}%</div>
+                    </div>
+                </div>
+                <div class="goal-summary">
+                    {% if livros_ano >= meta_livros %}
+                        Meta anual de livros concluída. Excelente ritmo!
+                    {% else %}
+                        Faltam {{ faltam_livros }} livros para bater sua meta.
+                    {% endif %}
+                    <div class="mt-2" style="font-size:0.85rem;color:var(--text-subtle);">
+                        Total = {{ livros_no_site_ano }} adicionados no site + {{ livros_lidos_informados }} informados por você.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="metas-card">
+                <div class="card-title-metas"><i class="bi bi-chat-quote-fill me-2"></i>Meta de Resenhas</div>
+                <div class="goal-ring" style="--value: {{ resenhas_percent }};">
+                    <div class="goal-ring-center">
+                        <div class="goal-ring-value">{{ resenhas_ano }}/{{ meta_resenhas }}</div>
+                        <div class="goal-ring-label">conclusão {{ resenhas_percent }}%</div>
+                    </div>
+                </div>
+                <div class="goal-summary">
+                    {% if resenhas_ano >= meta_resenhas %}
+                        Meta de resenhas concluída. Continue compartilhando suas leituras!
+                    {% else %}
+                        Faltam {{ faltam_resenhas }} resenhas para sua meta.
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="metas-card">
+                <div class="card-title-metas"><i class="bi bi-award-fill me-2"></i>Progresso de Medalhas</div>
+                <div class="goal-ring" style="--value: {{ badge_percent }};">
+                    <div class="goal-ring-center">
+                        <div class="goal-ring-value">{{ badges_desbloqueadas }}/{{ total_badges }}</div>
+                        <div class="goal-ring-label">coleção {{ badge_percent }}%</div>
+                    </div>
+                </div>
+                <div class="goal-summary">Este gráfico extra mostra quantas medalhas você já desbloqueou no sistema.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-6">
+            <div class="metas-card">
+                <div class="card-title-metas"><i class="bi bi-bar-chart-fill me-2"></i>Livros Adicionados por Mês</div>
+                <div class="bars-wrap">
+                    {% for barra in livros_barras %}
+                        <div class="bar-col">
+                            <div class="bar-track">
+                                <div class="bar-fill" data-height="{{ barra.percent }}"></div>
+                            </div>
+                            <div class="bar-value">{{ barra.total }}</div>
+                            <div class="bar-label">{{ barra.mes }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="hint-line">Sugestão extra: acompanhe aqui seu ritmo mensal de criação de livros.</div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="metas-card">
+                <div class="card-title-metas"><i class="bi bi-graph-up-arrow me-2"></i>Resenhas Publicadas por Mês</div>
+                <div class="bars-wrap">
+                    {% for barra in resenhas_barras %}
+                        <div class="bar-col">
+                            <div class="bar-track">
+                                <div class="bar-fill review" data-height="{{ barra.percent }}"></div>
+                            </div>
+                            <div class="bar-value">{{ barra.total }}</div>
+                            <div class="bar-label">{{ barra.mes }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="hint-line">Sugestão extra: use este gráfico para manter consistência de escrita durante o ano.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="metas-card mt-3">
+        <div class="card-title-metas"><i class="bi bi-speedometer2 me-2"></i>Resumo Rápido</div>
+        <div class="mini-kpis">
+            <div class="mini-kpi">
+                <div class="mini-kpi-label">Livros no ano</div>
+                <div class="mini-kpi-value">{{ livros_ano }}</div>
+            </div>
+            <div class="mini-kpi">
+                <div class="mini-kpi-label">Resenhas no ano</div>
+                <div class="mini-kpi-value">{{ resenhas_ano }}</div>
+            </div>
+            <div class="mini-kpi">
+                <div class="mini-kpi-label">Meta livros</div>
+                <div class="mini-kpi-value">{{ meta_livros }}</div>
+            </div>
+            <div class="mini-kpi">
+                <div class="mini-kpi-label">Meta resenhas</div>
+                <div class="mini-kpi-value">{{ meta_resenhas }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.bar-fill[data-height]').forEach(function (bar) {
+            const value = parseInt(bar.getAttribute('data-height') || '0', 10)
+            bar.style.height = Math.max(0, Math.min(100, value)) + '%'
+        })
+    })
+</script>
+{% endblock %}
