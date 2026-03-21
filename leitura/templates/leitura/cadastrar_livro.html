@@ -10,40 +10,116 @@
     }
 
     .form-panel {
-        background: linear-gradient(145deg, #1a1f33 0%, #131a2b 100%);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: var(--bg-panel);
+        border: 1px solid var(--border-soft);
         border-radius: 16px;
         box-shadow: 0 14px 40px rgba(0, 0, 0, 0.24);
     }
 
     .field-label {
-        color: #d7e4ff;
+        color: var(--text-main);
         font-weight: 600;
         margin-bottom: 8px;
     }
 
     .form-control,
     .form-select {
-        background-color: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: #edf4ff;
+        background-color: var(--bg-main);
+        border: 1px solid var(--border-soft);
+        color: var(--text-main);
     }
 
     .form-control:focus,
     .form-select:focus {
-        background-color: rgba(255, 255, 255, 0.06);
-        border-color: #00d4ff;
-        box-shadow: 0 0 0 0.2rem rgba(0, 212, 255, 0.15);
-        color: #edf4ff;
+        background-color: var(--bg-panel-soft);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.2);
+        color: var(--text-main);
     }
 
     .upload-hint {
-        color: #89a0c7;
+        color: var(--text-muted);
         font-size: 0.9rem;
     }
 
+    .upload-control {
+        position: relative;
+    }
+
+    .upload-control .modern-file-input {
+        position: absolute;
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+        pointer-events: none;
+    }
+
+    .upload-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px dashed var(--accent);
+        background: rgba(88, 166, 255, 0.08);
+        color: var(--text-main);
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+        width: 100%;
+        min-height: 56px;
+    }
+
+    .upload-trigger:hover {
+        background: rgba(88, 166, 255, 0.16);
+        border-color: var(--accent-light);
+    }
+
+    .upload-trigger.drag-active {
+        background: rgba(88, 166, 255, 0.2);
+        border-color: var(--accent-light);
+        box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.2);
+    }
+
+    .upload-control.drag-active .upload-trigger {
+        background: rgba(88, 166, 255, 0.2);
+        border-color: var(--accent-light);
+        box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.2);
+    }
+
+    .upload-file-name {
+        margin-top: 8px;
+        color: var(--text-subtle);
+        font-size: 0.9rem;
+    }
+
+    .upload-preview {
+        margin-top: 12px;
+        width: 130px;
+        height: 170px;
+        border-radius: 14px;
+        border: 1px solid var(--border-soft);
+        background: var(--bg-panel-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .upload-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .upload-preview .bi {
+        font-size: 1.8rem;
+        color: var(--text-subtle);
+    }
+
     .errorlist {
-        color: #ff9f9f;
+        color: var(--danger);
         list-style: none;
         padding-left: 0;
         margin: 8px 0 0;
@@ -54,10 +130,10 @@
 <div class="form-shell">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold mb-1">Cadastrar Novo Livro</h2>
-            <p class="text-secondary mb-0">Preencha todos os campos e publique o livro com a primeira resenha da comunidade.</p>
+            <h2 class="fw-bold mb-1" style="color: var(--accent-alt);">Cadastrar Novo Livro</h2>
+            <p class="mb-0" style="color: var(--text-muted);">Preencha todos os campos e publique o livro com a primeira resenha da comunidade.</p>
         </div>
-        <a href="{% url 'home' %}" class="btn btn-outline-info">Voltar</a>
+        <a href="{% url 'home' %}" class="btn btn-outline-light" style="border-color: var(--accent); color: var(--accent);">Voltar</a>
     </div>
 
     <div class="form-panel p-4 p-lg-5">
@@ -92,7 +168,17 @@
                     </div>
                     <div>
                         <label class="field-label" for="{{ form.capa.id_for_label }}">Foto da capa</label>
-                        {{ form.capa }}
+                        <div class="upload-control">
+                            {{ form.capa }}
+                            <label for="id_capa" class="upload-trigger">
+                                <i class="bi bi-images"></i>
+                                Arraste e solte a capa ou clique para selecionar
+                            </label>
+                            <div class="upload-file-name" id="capaFileName">Nenhum arquivo selecionado</div>
+                            <div class="upload-preview" id="capaPreview">
+                                <i class="bi bi-book"></i>
+                            </div>
+                        </div>
                         <div class="upload-hint mt-2">A imagem da capa e obrigatoria para o livro aparecer corretamente no destaque da semana.</div>
                         {{ form.capa.errors }}
                     </div>
@@ -100,10 +186,83 @@
             </div>
 
             <div class="d-flex justify-content-end gap-2 mt-4">
-                <a href="{% url 'home' %}" class="btn btn-outline-light">Cancelar</a>
-                <button type="submit" class="btn btn-info fw-bold">Publicar Livro</button>
+                <a href="{% url 'home' %}" class="btn btn-outline-light" style="border-color: var(--text-muted); color: var(--text-muted);">Cancelar</a>
+                <button type="submit" class="btn fw-bold" style="background-color: var(--accent); color: #ffffff; border: none;">Publicar Livro</button>
             </div>
         </form>
     </div>
 </div>
+
+<script>
+    // Evita que o navegador abra o arquivo em nova guia no drop
+    ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(function (eventName) {
+        window.addEventListener(eventName, function (e) {
+            e.preventDefault()
+        })
+    })
+
+    // Upload moderno + preview da capa do livro
+    const capaInput = document.getElementById('id_capa')
+    const capaFileName = document.getElementById('capaFileName')
+    const capaPreview = document.getElementById('capaPreview')
+
+    if (capaInput && capaFileName && capaPreview) {
+        const capaDropzone = document.querySelector('.upload-control')
+
+        function updateCapa(file) {
+            if (!file) {
+                capaFileName.textContent = 'Nenhum arquivo selecionado'
+                capaPreview.innerHTML = '<i class="bi bi-book"></i>'
+                return
+            }
+
+            capaFileName.textContent = file.name
+            if (file.type && file.type.startsWith('image/')) {
+                const reader = new FileReader()
+                reader.onload = function (e) {
+                    capaPreview.innerHTML = '<img src="' + e.target.result + '" alt="Preview da capa">'
+                }
+                reader.readAsDataURL(file)
+            }
+        }
+
+        capaInput.addEventListener('change', function () {
+            const file = this.files && this.files[0]
+            updateCapa(file)
+        })
+
+        if (capaDropzone) {
+            ;['dragenter', 'dragover'].forEach(function (eventName) {
+                capaDropzone.addEventListener(eventName, function (e) {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    capaDropzone.classList.add('drag-active')
+                })
+            })
+
+            ;['dragleave', 'dragend', 'drop'].forEach(function (eventName) {
+                capaDropzone.addEventListener(eventName, function (e) {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    capaDropzone.classList.remove('drag-active')
+                })
+            })
+
+            capaDropzone.addEventListener('drop', function (e) {
+                const file = e.dataTransfer && e.dataTransfer.files ? e.dataTransfer.files[0] : null
+                if (!file) {
+                    return
+                }
+                if (!file.type || !file.type.startsWith('image/')) {
+                    capaFileName.textContent = 'Arquivo invalido. Envie uma imagem.'
+                    return
+                }
+                const dt = new DataTransfer()
+                dt.items.add(file)
+                capaInput.files = dt.files
+                updateCapa(file)
+            })
+        }
+    }
+</script>
 {% endblock %}

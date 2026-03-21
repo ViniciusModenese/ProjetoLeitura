@@ -1,0 +1,582 @@
+{% extends 'leitura/base.html' %}
+{% load static %}
+
+{% block title %}Meu Perfil - EstanteAberta{% endblock %}
+{% block page_container_class %}container-fluid px-lg-4 px-2 mt-3{% endblock %}
+
+{% block content %}
+<style>
+    .perfil-shell {
+        max-width: 900px;
+        margin: 0 auto 40px;
+    }
+
+    .perfil-header {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: var(--bg-panel);
+        border: 1px solid var(--border-soft);
+        border-radius: 16px;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+    }
+
+    .foto-perfil-wrapper {
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .foto-perfil {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--accent);
+        box-shadow: 0 0 20px rgba(88, 166, 255, 0.4);
+    }
+
+    .foto-perfil-placeholder {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: rgba(88, 166, 255, 0.1);
+        border: 3px solid var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: var(--accent);
+    }
+
+    .perfil-info h2 {
+        color: var(--text-main);
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 12px;
+    }
+
+    .perfil-info p {
+        color: var(--text-muted);
+        font-size: 1rem;
+        margin-bottom: 20px;
+    }
+
+    .stats-row {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        background: rgba(88, 166, 255, 0.08);
+        border: 1px solid rgba(88, 166, 255, 0.2);
+        border-radius: 10px;
+        padding: 15px 20px;
+        text-align: center;
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .stat-value {
+        color: var(--accent);
+        font-size: 1.8rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .stat-label {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-top: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .perfil-panel {
+        background: var(--bg-panel);
+        border: 1px solid var(--border-soft);
+        border-radius: 16px;
+        padding: 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+    }
+
+    .perfil-panel h3 {
+        color: var(--accent-alt);
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--border-soft);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-control,
+    .form-select {
+        background-color: var(--bg-main) !important;
+        border: 1px solid var(--border-soft) !important;
+        color: var(--text-main) !important;
+        border-radius: 10px !important;
+        padding: 12px 15px !important;
+        font-size: 1rem !important;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background-color: var(--bg-panel-soft) !important;
+        border-color: var(--accent) !important;
+        color: var(--text-main) !important;
+        box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.2) !important;
+    }
+
+    .form-label {
+        color: var(--text-main);
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+
+    .form-text {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
+    .upload-control {
+        position: relative;
+    }
+
+    .upload-control .modern-file-input {
+        position: absolute;
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+        pointer-events: none;
+    }
+
+    .upload-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px dashed var(--accent);
+        background: rgba(88, 166, 255, 0.08);
+        color: var(--text-main);
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+        width: 100%;
+        min-height: 56px;
+    }
+
+    .upload-trigger:hover {
+        background: rgba(88, 166, 255, 0.16);
+        border-color: var(--accent-light);
+    }
+
+    .upload-trigger.drag-active {
+        background: rgba(88, 166, 255, 0.2);
+        border-color: var(--accent-light);
+        box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.2);
+    }
+
+    .upload-control.drag-active .upload-trigger {
+        background: rgba(88, 166, 255, 0.2);
+        border-color: var(--accent-light);
+        box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.2);
+    }
+
+    .upload-file-name {
+        margin-top: 8px;
+        color: var(--text-subtle);
+        font-size: 0.9rem;
+    }
+
+    .upload-preview {
+        margin-top: 12px;
+        width: 94px;
+        height: 94px;
+        border-radius: 14px;
+        border: 1px solid var(--border-soft);
+        background: var(--bg-panel-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .upload-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .upload-preview .bi {
+        font-size: 1.6rem;
+        color: var(--text-subtle);
+    }
+
+    .badges-container {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .badge-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .badge-img {
+        width: 70px;
+        height: 70px;
+        object-fit: contain;
+        filter: drop-shadow(0 0 8px rgba(88, 166, 255, 0.3));
+        transition: transform 0.2s;
+    }
+
+    .badge-item:hover .badge-img {
+        transform: scale(1.1);
+    }
+
+    .badge-name {
+        color: var(--text-main);
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-align: center;
+        max-width: 80px;
+        line-height: 1.1;
+    }
+
+    .btn-editar {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background-color: var(--accent-alt);
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: 0.2s;
+        font-size: 1rem;
+    }
+
+    .btn-editar:hover {
+        background-color: var(--accent-alt-light);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(181, 71, 8, 0.25);
+    }
+
+    .btn-salvar {
+        background-color: var(--accent);
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 30px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: 0.2s;
+        font-size: 1rem;
+        width: 100%;
+    }
+
+    .btn-salvar:hover {
+        background-color: var(--accent-light);
+        box-shadow: 0 8px 20px rgba(88, 166, 255, 0.3);
+    }
+
+    .alerta {
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        border-left: 4px solid;
+        background-color: var(--bg-panel-soft);
+    }
+
+    .alerta-success {
+        border-left-color: var(--success);
+        color: var(--success);
+    }
+
+    .alerta-danger {
+        border-left-color: var(--danger);
+        color: var(--danger);
+    }
+
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 8px 0 0 0;
+        color: var(--danger);
+        font-size: 0.9rem;
+    }
+
+    .errorlist li {
+        padding: 4px 0;
+    }
+
+    @media (max-width: 768px) {
+        .perfil-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .perfil-info h2 {
+            font-size: 1.5rem;
+        }
+
+        .stat-item {
+            flex: 1 1 calc(50% - 10px);
+            min-width: unset;
+        }
+    }
+</style>
+
+<div class="perfil-shell">
+    {% if mensagem %}
+        <div class="alerta alerta-{{ tipo_mensagem }}">
+            {{ mensagem }}
+        </div>
+    {% endif %}
+
+    <!-- Header do Perfil -->
+    <div class="perfil-header">
+        <div class="foto-perfil-wrapper">
+            {% if perfil.foto_perfil %}
+                <img src="{{ perfil.foto_perfil.url }}" alt="Foto de {{ user.username }}" class="foto-perfil">
+            {% else %}
+                <div class="foto-perfil-placeholder">👤</div>
+            {% endif %}
+        </div>
+
+        <div class="perfil-info">
+            <h2>{{ user.get_full_name|default:user.username }}</h2>
+            <p>{{ user.email }}</p>
+            
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-value">{{ perfil.xp }}</div>
+                    <div class="stat-label"><i class="bi bi-lightning-charge-fill"></i> XP Total</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ perfil.badges.count }}</div>
+                    <div class="stat-label"><i class="bi bi-award-fill"></i> Medalhas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ perfil.livros_lidos }}</div>
+                    <div class="stat-label"><i class="bi bi-book-half"></i> Lidos</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Medalhas Desbloqueadas -->
+    {% if perfil.badges.all %}
+        <div class="perfil-panel">
+            <h3><i class="bi bi-trophy-fill"></i> Medalhas Desbloqueadas</h3>
+            <div class="badges-container">
+                {% for badge in perfil.badges.all %}
+                    <div class="badge-item">
+                        {% if badge.imagem %}
+                            <img src="{{ badge.imagem.url }}" alt="{{ badge.nome }}" class="badge-img" title="{{ badge.descricao }}" data-bs-toggle="tooltip">
+                        {% endif %}
+                        <div class="badge-name">{{ badge.nome }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Editar Perfil -->
+    <div class="perfil-panel">
+        <h3><i class="bi bi-pencil-square"></i> Editar Perfil</h3>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="editar_perfil" value="1">
+
+            <div class="form-group">
+                {{ form_perfil.nome.label_tag }}
+                {{ form_perfil.nome }}
+                {% if form_perfil.nome.errors %}
+                    {{ form_perfil.nome.errors }}
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form_perfil.email.label_tag }}
+                {{ form_perfil.email }}
+                {% if form_perfil.email.errors %}
+                    {{ form_perfil.email.errors }}
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form_perfil.foto_perfil.label_tag }}
+                <div class="upload-control">
+                    {{ form_perfil.foto_perfil }}
+                    <label for="id_foto_perfil" class="upload-trigger">
+                        <i class="bi bi-cloud-arrow-up-fill"></i>
+                        Arraste e solte uma imagem ou clique para selecionar
+                    </label>
+                    <div class="upload-file-name" id="fotoPerfilFileName">Nenhum arquivo selecionado</div>
+                    <div class="upload-preview" id="fotoPerfilPreview">
+                        <i class="bi bi-image"></i>
+                    </div>
+                </div>
+                {% if form_perfil.foto_perfil.errors %}
+                    {{ form_perfil.foto_perfil.errors }}
+                {% endif %}
+                <small class="form-text">Formatos aceitos: PNG, JPG, GIF. Tamanho máximo: 5MB</small>
+            </div>
+
+            <button type="submit" class="btn-salvar">Salvar Alterações</button>
+        </form>
+    </div>
+
+    <!-- Alterar Senha -->
+    <div class="perfil-panel">
+        <h3><i class="bi bi-shield-lock-fill"></i> Alterar Senha</h3>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="alterar_senha" value="1">
+
+            <div class="form-group">
+                {{ form_senha.senha_atual.label_tag }}
+                {{ form_senha.senha_atual }}
+                {% if form_senha.senha_atual.errors %}
+                    {{ form_senha.senha_atual.errors }}
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form_senha.senha_nova.label_tag }}
+                {{ form_senha.senha_nova }}
+                {% if form_senha.senha_nova.errors %}
+                    {{ form_senha.senha_nova.errors }}
+                {% endif %}
+                <small class="form-text">Mínimo de 8 caracteres</small>
+            </div>
+
+            <div class="form-group">
+                {{ form_senha.senha_confirmacao.label_tag }}
+                {{ form_senha.senha_confirmacao }}
+                {% if form_senha.senha_confirmacao.errors %}
+                    {{ form_senha.senha_confirmacao.errors }}
+                {% endif %}
+            </div>
+
+            {% if form_senha.non_field_errors %}
+                <div class="alerta alerta-danger">
+                    {{ form_senha.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <button type="submit" class="btn-salvar">Alterar Senha</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Inicializar tooltips do Bootstrap sem quebrar caso bootstrap ainda nao exista
+        if (window.bootstrap && bootstrap.Tooltip) {
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                new bootstrap.Tooltip(tooltipTriggerEl)
+            })
+        }
+
+        // Evita que o navegador abra o arquivo em nova guia no drop
+        ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(function (eventName) {
+            document.addEventListener(eventName, function (e) {
+                e.preventDefault()
+            }, true)
+        })
+
+        // Upload moderno + preview da foto de perfil
+        const fotoPerfilInput = document.getElementById('id_foto_perfil')
+        const fotoPerfilFileName = document.getElementById('fotoPerfilFileName')
+        const fotoPerfilPreview = document.getElementById('fotoPerfilPreview')
+
+        if (fotoPerfilInput && fotoPerfilFileName && fotoPerfilPreview) {
+            const fotoPerfilDropzone = document.querySelector('.upload-control')
+
+            function updateFotoPerfil(file) {
+                if (!file) {
+                    fotoPerfilFileName.textContent = 'Nenhum arquivo selecionado'
+                    fotoPerfilPreview.innerHTML = '<i class="bi bi-image"></i>'
+                    return
+                }
+
+                fotoPerfilFileName.textContent = file.name
+                if (file.type && file.type.startsWith('image/')) {
+                    const reader = new FileReader()
+                    reader.onload = function (e) {
+                        fotoPerfilPreview.innerHTML = '<img src="' + e.target.result + '" alt="Preview da foto">'
+                    }
+                    reader.readAsDataURL(file)
+                }
+            }
+
+            fotoPerfilInput.addEventListener('change', function () {
+                const file = this.files && this.files[0]
+                updateFotoPerfil(file)
+            })
+
+            if (fotoPerfilDropzone) {
+                ;['dragenter', 'dragover'].forEach(function (eventName) {
+                    fotoPerfilDropzone.addEventListener(eventName, function (e) {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        fotoPerfilDropzone.classList.add('drag-active')
+                    })
+                })
+
+                ;['dragleave', 'dragend', 'drop'].forEach(function (eventName) {
+                    fotoPerfilDropzone.addEventListener(eventName, function (e) {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        fotoPerfilDropzone.classList.remove('drag-active')
+                    })
+                })
+
+                fotoPerfilDropzone.addEventListener('drop', function (e) {
+                    const fileList = e.dataTransfer && e.dataTransfer.files ? e.dataTransfer.files : null
+                    const file = fileList && fileList.length ? fileList[0] : null
+                    if (!file) {
+                        return
+                    }
+                    if (!file.type || !file.type.startsWith('image/')) {
+                        fotoPerfilFileName.textContent = 'Arquivo invalido. Envie uma imagem.'
+                        return
+                    }
+
+                    // Tenta sincronizar o arquivo no input para envio no submit.
+                    try {
+                        fotoPerfilInput.files = fileList
+                    } catch (err) {
+                        try {
+                            const dt = new DataTransfer()
+                            dt.items.add(file)
+                            fotoPerfilInput.files = dt.files
+                        } catch (innerErr) {
+                        }
+                    }
+
+                    updateFotoPerfil(file)
+                })
+            }
+        }
+    })
+</script>
+{% endblock %}

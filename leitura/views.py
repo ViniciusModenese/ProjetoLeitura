@@ -1,11 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth import authenticate, update_session_auth_hash
 from .models import Livro, Perfil, Badge, Resenha
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.db.models import Avg, Count
 from django.contrib.auth.decorators import login_required
-from .forms import ResenhaForm, CadastroLivroForm
+from .forms import ResenhaForm, CadastroLivroForm, EditarPerfilForm, AlterarSenhaForm
 
 
 def atualizar_xp_e_badges(usuario, xp_ganho=10):
@@ -108,3 +109,62 @@ class CadastroView(generic.CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy('login')
     template_name = 'registration/cadastro.html'
+
+
+@login_required
+def perfil(request):
+    """View para exibir e editar o perfil do usuário."""
+    perfil_obj = request.user.perfil
+    form_perfil = None
+    form_senha = None
+    mensagem = ''
+    tipo_mensagem = ''
+
+    if request.method == 'POST':
+        if 'editar_perfil' in request.POST:
+            form_perfil = EditarPerfilForm(request.POST, request.FILES, instance=perfil_obj)
+            if form_perfil.is_valid():
+                form_perfil.save()
+                mensagem = 'Perfil atualizado com sucesso!'
+                tipo_mensagem = 'success'
+                # Recarregar para exibir valores atualizados
+                perfil_obj.refresh_from_db()
+                request.user.refresh_from_db()
+            else:
+                tipo_mensagem = 'danger'
+                mensagem = 'Erro ao atualizar perfil.'
+        
+        elif 'alterar_senha' in request.POST:
+            form_senha = AlterarSenhaForm(request.POST)
+            if form_senha.is_valid():
+                senha_atual = form_senha.cleaned_data['senha_atual']
+                # Verificar se a senha atual está correta
+                if request.user.check_password(senha_atual):
+                    request.user.set_password(form_senha.cleaned_data['senha_nova'])
+                    request.user.save()
+                    # Manter o usuário logado após alterar a senha
+                    update_session_auth_hash(request, request.user)
+                    mensagem = 'Senha alterada com sucesso!'
+                    tipo_mensagem = 'success'
+                    form_senha = AlterarSenhaForm()  # Limpar o form
+                else:
+                    form_senha.add_error('senha_atual', 'Senha atual incorreta.')
+                    tipo_mensagem = 'danger'
+                    mensagem = 'A senha atual está incorreta.'
+            else:
+                tipo_mensagem = 'danger'
+                mensagem = 'Erro ao alterar senha.'
+    
+    if not form_perfil:
+        form_perfil = EditarPerfilForm(instance=perfil_obj)
+    if not form_senha:
+        form_senha = AlterarSenhaForm()
+
+    context = {
+        'perfil': perfil_obj,
+        'form_perfil': form_perfil,
+        'form_senha': form_senha,
+        'mensagem': mensagem,
+        'tipo_mensagem': tipo_mensagem,
+    }
+    return render(request, 'leitura/perfil.html', context)

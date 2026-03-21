@@ -16,21 +16,21 @@
     }
 
     .panel {
-        background: linear-gradient(145deg, #1a1f33 0%, #131a2b 100%);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: var(--bg-panel);
+        border: 1px solid var(--border-soft);
         border-radius: 16px;
         box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
     }
 
     .section-title {
-        color: #e8efff;
+        color: var(--accent-alt);
         font-size: 1.15rem;
         font-weight: 700;
         letter-spacing: 0.2px;
     }
 
     .dashboard-title {
-        color: #f5f7ff;
+        color: var(--text-main);
         font-size: clamp(2rem, 2.2vw, 2.5rem);
         font-weight: 800;
         letter-spacing: 0.2px;
@@ -38,7 +38,7 @@
     }
 
     .soft-line {
-        border-top: 1px solid rgba(255, 255, 255, 0.09);
+        border-top: 1px solid var(--border-soft);
     }
 
     .progress-gadget {
@@ -57,12 +57,12 @@
         display: grid;
         place-items: center;
         background:
-            radial-gradient(circle at 50% 50%, rgba(114, 214, 255, 0.16) 0, rgba(114, 214, 255, 0.02) 44%, transparent 45%),
-            conic-gradient(from 220deg, #66f2ff calc(var(--value) * 1%), rgba(63, 79, 126, 0.32) 0);
+            radial-gradient(circle at 50% 50%, rgba(88, 166, 255, 0.16) 0, rgba(88, 166, 255, 0.02) 44%, transparent 45%),
+            conic-gradient(from 220deg, var(--accent) calc(var(--value) * 1%), rgba(88, 166, 255, 0.2) 0);
         box-shadow:
-            0 0 0 8px rgba(117, 129, 192, 0.08),
+            0 0 0 8px rgba(88, 166, 255, 0.08),
             0 12px 28px rgba(0, 0, 0, 0.35),
-            0 0 24px rgba(0, 212, 255, 0.14);
+            0 0 24px rgba(88, 166, 255, 0.2);
     }
 
     .xp-ring::before {
@@ -70,8 +70,8 @@
         position: absolute;
         inset: 16px;
         border-radius: 50%;
-        background: radial-gradient(circle at 35% 30%, rgba(32, 55, 96, 0.9) 0, rgba(15, 24, 45, 0.96) 60%, #0f172c 100%);
-        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 12px 30px rgba(255, 255, 255, 0.03);
+        background: radial-gradient(circle at 35% 30%, var(--bg-panel-soft) 0, var(--bg-main) 60%, var(--bg-main) 100%);
+        box-shadow: inset 0 0 0 1px rgba(200, 208, 216, 0.1), inset 0 12px 30px rgba(88, 166, 255, 0.05);
     }
 
     .xp-ring::after {
@@ -79,7 +79,7 @@
         position: absolute;
         inset: 4px;
         border-radius: 50%;
-        border: 1px solid rgba(130, 206, 255, 0.12);
+        border: 1px solid rgba(88, 166, 255, 0.15);
         pointer-events: none;
     }
 
@@ -96,27 +96,27 @@
     .xp-ring-value {
         font-size: 2rem;
         font-weight: 800;
-        color: #8bf5ff;
+        color: var(--accent-light);
         line-height: 1;
-        text-shadow: 0 0 16px rgba(80, 234, 255, 0.22);
+        text-shadow: 0 0 16px rgba(88, 166, 255, 0.3);
     }
 
     .xp-ring-label {
         font-size: 0.78rem;
         text-transform: uppercase;
         letter-spacing: 1.6px;
-        color: #7d91bb;
+        color: var(--text-muted);
     }
 
     .xp-ring-subvalue {
         font-size: 1rem;
         font-weight: 700;
-        color: #d9e7ff;
+        color: var(--text-main);
         line-height: 1;
     }
 
     .progress-caption {
-        color: #c7d9ff;
+        color: var(--accent-alt-light);
         font-size: 1.05rem;
         font-weight: 700;
         margin-bottom: 2px;
@@ -124,7 +124,7 @@
 
     .progress-helper {
         font-size: 0.95rem;
-        color: #7dbddd;
+        color: var(--text-muted);
         max-width: 220px;
         margin: 0 auto;
         line-height: 1.45;
@@ -135,9 +135,9 @@
         width: 100%;
         object-fit: contain;
         object-position: center;
-        background: rgba(255, 255, 255, 0.03);
+        background: var(--bg-panel-soft);
         border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        border: 1px solid var(--border-soft);
     }
 
     .book-item {
@@ -156,8 +156,8 @@
     }
 
     .review-item {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: var(--bg-panel-soft);
+        border: 1px solid var(--border-soft);
         border-radius: 10px;
         padding: 16px;
         height: 100%;
@@ -169,7 +169,7 @@
 
     .review-item:hover {
         transform: translateY(-3px);
-        border-color: rgba(0, 212, 255, 0.35);
+        border-color: var(--accent);
     }
 
     .reviews-panel {
@@ -190,30 +190,30 @@
 
     .star-filled {
         display: inline-block;
-        background: linear-gradient(175deg, #fff59d 0%, #ffd600 45%, #f5a623 100%);
+        background: linear-gradient(175deg, #ffd700 0%, #ffb700 45%, #ff9500 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        filter: drop-shadow(0 1px 4px rgba(255, 185, 0, 0.6));
+        filter: drop-shadow(0 1px 4px rgba(255, 183, 0, 0.5));
     }
 
     .star-empty {
-        color: #3a3a50;
+        color: var(--bg-hover);
     }
 
     .gadget-badge-slot {
         margin-top: 18px;
         padding: 14px 12px 10px;
         border-radius: 18px;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(88, 166, 255, 0.05);
+        border: 1px solid var(--border-soft);
     }
 
     .gadget-medal {
         width: 140px;
         height: 140px;
         object-fit: contain;
-        filter: drop-shadow(0 0 18px rgba(0, 212, 255, 0.22));
+        filter: drop-shadow(0 0 18px rgba(88, 166, 255, 0.25));
     }
 
     .badge-hover-wrap {
@@ -234,9 +234,9 @@
     .badge-hover-label {
         font-size: 0.95rem;
         font-weight: 700;
-        color: #dff0ff;
-        background: rgba(9, 21, 43, 0.92);
-        border: 1px solid rgba(99, 209, 255, 0.35);
+        color: var(--text-main);
+        background: var(--bg-main);
+        border: 1px solid var(--border-soft);
         border-radius: 999px;
         padding: 3px 12px;
     }
@@ -248,21 +248,21 @@
         align-items: center;
         justify-content: center;
         border-radius: 50%;
-        background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        color: #9bb0dc;
+        background: rgba(88, 166, 255, 0.1);
+        border: 1px solid var(--border-soft);
+        color: var(--accent);
         font-size: 2rem;
     }
 
     .gadget-badge-name {
-        color: #dce8ff;
+        color: var(--text-main);
         font-weight: 700;
         margin-top: 10px;
         font-size: 1rem;
     }
 
     .gadget-badge-text {
-        color: #8ca1cb;
+        color: var(--text-muted);
         font-size: 0.9rem;
         margin: 4px 0 0;
     }
@@ -277,6 +277,7 @@
 
     .review-item .text-info {
         font-size: 1.28rem;
+        color: var(--accent-alt) !important;
     }
 
     .review-item .small {
@@ -285,6 +286,39 @@
 
     .review-item .star-line {
         font-size: 1.3rem;
+    }
+
+    .review-quote {
+        color: var(--text-main);
+        opacity: 0.9;
+    }
+
+    .usuario-resenha {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .usuario-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--accent);
+        flex-shrink: 0;
+    }
+
+    .usuario-avatar-placeholder {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(88, 166, 255, 0.15);
+        border: 2px solid var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        flex-shrink: 0;
     }
 </style>
 
@@ -379,7 +413,14 @@
                 <div class="col-md-6 col-xl-4">
                     <a href="{% url 'detalhes_livro' resenha.livro.pk %}" class="review-item">
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="text-info fw-semibold">{{ resenha.usuario.username }}</span>
+                            <div class="usuario-resenha">
+                                {% if resenha.usuario.perfil.foto_perfil %}
+                                    <img src="{{ resenha.usuario.perfil.foto_perfil.url }}" alt="{{ resenha.usuario.username }}" class="usuario-avatar">
+                                {% else %}
+                                    <div class="usuario-avatar-placeholder">👤</div>
+                                {% endif %}
+                                <span class="text-info fw-semibold">{{ resenha.usuario.get_full_name|default:resenha.usuario.username }}</span>
+                            </div>
                             <span class="star-line">
                                 <i class="bi {{ resenha.nota|star_classes:1 }}"></i>
                                 <i class="bi {{ resenha.nota|star_classes:2 }}"></i>
@@ -389,7 +430,7 @@
                             </span>
                         </div>
                         <p class="small text-secondary mb-2">Sobre: {{ resenha.livro.titulo }}</p>
-                        <p class="small text-light mb-0 opacity-75">"{{ resenha.texto|truncatewords:22 }}"</p>
+                        <p class="small mb-0 review-quote">"{{ resenha.texto|truncatewords:22 }}"</p>
                     </a>
                 </div>
             {% empty %}

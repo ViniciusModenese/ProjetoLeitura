@@ -38,6 +38,7 @@ class Perfil(models.Model):
     xp = models.IntegerField(default=0)
     livros_lidos = models.IntegerField(default=0)
     badges = models.ManyToManyField(Badge, blank=True)
+    foto_perfil = models.ImageField(upload_to='perfis/', null=True, blank=True)
 
     def __str__(self):
         return f"Perfil de {self.usuario.username}"

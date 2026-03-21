@@ -5,34 +5,128 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}EstanteAberta{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
     <style>
         :root {
-            --bg-main: #0a1020;
-            --bg-panel: #131d35;
-            --bg-panel-soft: #182646;
-            --bg-hover: #22345f;
-            --text-main: #e8efff;
-            --text-muted: #8da0c9;
-            --accent: #00d4ff;
-            --border-soft: rgba(255, 255, 255, 0.08);
+            /* Dark Mode - Moderno e sofisticado */
+            --bg-main: #0d1117;
+            --bg-panel: #161b22;
+            --bg-panel-soft: #21262d;
+            --bg-hover: #30363d;
+            --text-main: #e6edf3;
+            --text-muted: #bfc8d2;
+            --text-subtle: #9aa4af;
+            --accent: #58a6ff;
+            --accent-light: #79c0ff;
+            --accent-alt: #f2cc60;
+            --accent-alt-light: #ffd98c;
+            --success: #3fb950;
+            --danger: #f85149;
+            --border-soft: rgba(200, 208, 216, 0.12);
+            --decor-bg-opacity: 0.08;
             --sidebar-width: 280px;
         }
 
+        html.light-mode {
+            /* Light Mode - Limpo e moderno */
+            --bg-main: #ffffff;
+            --bg-panel: #f6f8fa;
+            --bg-panel-soft: #eaeef2;
+            --bg-hover: #d0d7de;
+            --text-main: #111827;
+            --text-muted: #243041;
+            --text-subtle: #374151;
+            --accent: #0969da;
+            --accent-light: #1f6feb;
+            --accent-alt: #b54708;
+            --accent-alt-light: #dc6803;
+            --success: #1a7f37;
+            --danger: #d1242f;
+            --border-soft: rgba(31, 35, 40, 0.15);
+            --decor-bg-opacity: 0.14;
+        }
+
         body {
-            background:
-                radial-gradient(circle at 20% -20%, #1a2d57 0%, rgba(26, 45, 87, 0) 40%),
-                radial-gradient(circle at 100% 0, #1b3657 0%, rgba(27, 54, 87, 0) 35%),
-                var(--bg-main);
+            background: var(--bg-main);
             color: var(--text-main);
             min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Corrige contraste de utilitários do Bootstrap em ambos os temas */
+        .text-light {
+            color: var(--text-main) !important;
+        }
+
+        .text-secondary {
+            color: var(--text-muted) !important;
+        }
+
+        .text-info {
+            color: var(--accent) !important;
+        }
+
+        .text-muted {
+            color: var(--text-subtle) !important;
+        }
+
+        html.light-mode .text-light.opacity-75,
+        html.light-mode .text-secondary.opacity-75 {
+            opacity: 1 !important;
+        }
+
+        html.light-mode .small.text-secondary,
+        html.light-mode .form-text,
+        html.light-mode .lead {
+            color: var(--text-subtle) !important;
+        }
+
+        .form-control::placeholder,
+        .form-select::placeholder,
+        textarea::placeholder,
+        input::placeholder {
+            color: var(--text-subtle) !important;
+            opacity: 1;
+        }
+
+        .lead {
+            color: var(--text-muted);
+        }
+
+        .btn-info {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            color: #ffffff;
+        }
+
+        .btn-info:hover,
+        .btn-info:focus {
+            background-color: var(--accent-light);
+            border-color: var(--accent-light);
+            color: #ffffff;
+        }
+
+        .btn-outline-info {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-outline-info:hover,
+        .btn-outline-info:focus {
+            background-color: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
         }
 
         .top-nav-mobile {
-            background-color: #111a2f;
+            background-color: var(--bg-panel);
             border-bottom: 1px solid var(--border-soft);
+            transition: background-color 0.3s, border-color 0.3s;
         }
 
         .hamburger-btn {
@@ -51,6 +145,27 @@
             font-size: 1.2rem;
         }
 
+        .theme-toggle-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid var(--border-soft);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-main);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1.1rem;
+        }
+
+        .theme-toggle-btn:hover {
+            background: rgba(88, 166, 255, 0.15);
+            border-color: var(--accent);
+            color: var(--accent-light);
+        }
+
         .brand {
             font-weight: 800;
             color: var(--accent);
@@ -61,6 +176,31 @@
             flex-direction: column;
             align-items: center;
             gap: 6px;
+            transition: 0.2s;
+        }
+
+        .brand-wordmark {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.38rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--accent-alt);
+            line-height: 1;
+        }
+
+        @media (max-width: 991.98px) {
+            .brand-wordmark {
+                font-size: 1.2rem;
+            }
+        }
+
+        .brand:hover {
+            color: var(--accent-light);
+        }
+
+        .brand:hover .brand-wordmark {
+            color: var(--accent-alt-light);
         }
 
         .brand-logo {
@@ -77,7 +217,7 @@
 
         .sidebar {
             width: var(--sidebar-width);
-            background: linear-gradient(180deg, #0f1930 0%, #0b1428 100%);
+            background: var(--bg-panel);
             border-right: 1px solid var(--border-soft);
             position: fixed;
             top: 0;
@@ -85,6 +225,7 @@
             height: 100vh;
             padding: 22px 16px;
             z-index: 1030;
+            transition: background-color 0.3s, border-color 0.3s;
         }
 
         .sidebar-header {
@@ -116,23 +257,24 @@
             align-items: center;
             justify-content: center;
             font-size: 0.95rem;
-            color: #9ec5ff;
-            background: rgba(102, 242, 255, 0.08);
-            border: 1px solid rgba(102, 242, 255, 0.12);
+            color: var(--accent-light);
+            background: rgba(88, 166, 255, 0.1);
+            border: 1px solid rgba(88, 166, 255, 0.2);
             flex-shrink: 0;
+            transition: 0.2s;
         }
 
         .sidebar-link:hover .nav-icon,
         .sidebar-link.active .nav-icon {
-            color: #b8f8ff;
-            background: rgba(102, 242, 255, 0.2);
-            border-color: rgba(102, 242, 255, 0.25);
+            color: #ffffff;
+            background: var(--accent);
+            border-color: var(--accent);
         }
 
         .sidebar-link:hover,
         .sidebar-link.active {
-            color: var(--accent);
-            background-color: rgba(0, 212, 255, 0.08);
+            color: var(--accent-light);
+            background-color: rgba(88, 166, 255, 0.12);
         }
 
         .sidebar-cta {
@@ -142,10 +284,16 @@
             margin-top: 12px;
             text-decoration: none;
             background-color: var(--accent);
-            color: #061126;
+            color: #ffffff;
             font-weight: 800;
             padding: 12px 14px;
             font-size: 1.18rem;
+            transition: 0.2s;
+        }
+
+        .sidebar-cta:hover {
+            background-color: var(--accent-light);
+            box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
         }
 
         .sidebar-bottom {
@@ -157,17 +305,52 @@
         .app-main {
             flex: 1;
             width: 100%;
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+        }
+
+        .app-main::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                url("{% static 'img/padrao-livros.jpg' %}"),
+                radial-gradient(circle at 20% 20%, rgba(88, 166, 255, 0.12) 0, rgba(88, 166, 255, 0) 38%),
+                radial-gradient(circle at 80% 10%, rgba(181, 71, 8, 0.08) 0, rgba(181, 71, 8, 0) 36%),
+                repeating-linear-gradient(
+                    45deg,
+                    rgba(88, 166, 255, 0.035) 0,
+                    rgba(88, 166, 255, 0.035) 2px,
+                    transparent 2px,
+                    transparent 18px
+                );
+            background-repeat: no-repeat, no-repeat, no-repeat, repeat;
+            background-size: cover, 900px 900px, 820px 820px, 220px 220px;
+            background-position: center top, left top, right top, center center;
+            opacity: var(--decor-bg-opacity);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .app-main > * {
+            position: relative;
+            z-index: 1;
         }
 
         .app-topbar {
-            background-color: rgba(11, 18, 35, 0.8);
-            backdrop-filter: blur(6px);
+            background-color: var(--bg-panel);
             border-bottom: 1px solid var(--border-soft);
             padding: 12px 22px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 1.02rem;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .app-topbar .fw-semibold {
+            color: var(--accent-alt);
         }
 
         .user-chip {
@@ -181,17 +364,66 @@
             color: var(--text-main);
             text-decoration: none;
             font-size: 0.95rem;
+            transition: 0.2s;
+        }
+
+        .user-chip:hover {
+            border-color: var(--accent);
+            background-color: rgba(88, 166, 255, 0.1);
+            color: var(--accent-light);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+            flex-shrink: 0;
+        }
+
+        .user-avatar-placeholder {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(88, 166, 255, 0.15);
+            border: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .user-info-topbar {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .user-name-topbar {
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .user-xp-topbar {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.85rem;
         }
 
         .sidebar-bottom .small {
             font-size: 0.92rem;
+            color: var(--text-muted) !important;
         }
 
         .offcanvas.mobile-menu {
-            background: linear-gradient(180deg, #0f1930 0%, #0b1428 100%);
+            background: var(--bg-panel);
             color: var(--text-main);
             border-right: 1px solid var(--border-soft);
             width: min(86vw, 320px);
+            transition: background-color 0.3s, border-color 0.3s;
         }
 
         .offcanvas.mobile-menu .offcanvas-header {
@@ -225,10 +457,14 @@
                     <i class="bi bi-list"></i>
                 </button>
                 <a class="brand" href="{% url 'home' %}">
+                    <span class="brand-wordmark">Estante Aberta</span>
                     <img src="{% static 'img/logo.png' %}?v=2" alt="Logo EstanteAberta" class="brand-logo">
                 </a>
             </div>
             <div class="d-flex align-items-center gap-2">
+                <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Alternar tema">
+                    <i class="bi bi-moon-fill"></i>
+                </button>
                 {% if user.is_authenticated %}
                     <span class="text-info small">⭐ {{ user.perfil.xp }} XP</span>
                     <form action="{% url 'logout' %}" method="post" class="d-inline">
@@ -245,6 +481,7 @@
     <div class="offcanvas offcanvas-start mobile-menu" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title brand mb-0" id="mobileSidebarLabel">
+                <span class="brand-wordmark">Estante Aberta</span>
                 <img src="{% static 'img/logo.png' %}?v=2" alt="Logo EstanteAberta" class="brand-logo">
             </h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
@@ -285,6 +522,7 @@
         <aside class="sidebar d-none d-lg-flex flex-column">
             <div class="sidebar-header">
                 <a class="brand" href="{% url 'home' %}">
+                    <span class="brand-wordmark">Estante Aberta</span>
                     <img src="{% static 'img/logo.png' %}?v=2" alt="Logo EstanteAberta" class="brand-logo">
                 </a>
             </div>
@@ -307,7 +545,14 @@
 
             <div class="sidebar-bottom">
                 {% if user.is_authenticated %}
-                    <div class="small text-secondary mb-2">Conectado como {{ user.username }}</div>
+                    <a href="{% url 'perfil' %}" class="sidebar-link" style="margin-bottom: 12px;">
+                        {% if user.perfil.foto_perfil %}
+                            <img src="{{ user.perfil.foto_perfil.url }}" alt="{{ user.username }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent);">
+                        {% else %}
+                            <span style="width: 32px; height: 32px; border-radius: 50%; background: rgba(88, 166, 255, 0.15); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">👤</span>
+                        {% endif %}
+                        <span>{{ user.get_full_name|default:user.username }}</span>
+                    </a>
                     <form action="{% url 'logout' %}" method="post" class="d-grid">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-outline-info btn-sm">Sair</button>
@@ -322,14 +567,26 @@
         <main class="app-main">
             <header class="app-topbar d-none d-lg-flex">
                 <div class="fw-semibold">Dashboard</div>
-                {% if user.is_authenticated %}
-                    <a href="#" class="user-chip">
-                        <span>{{ user.username }}</span>
-                        <span class="text-info">⭐ {{ user.perfil.xp }} XP</span>
-                    </a>
-                {% else %}
-                    <a href="{% url 'login' %}" class="user-chip">Entrar</a>
-                {% endif %}
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtnDesktop" title="Alternar tema">
+                        <i class="bi bi-moon-fill"></i>
+                    </button>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'perfil' %}" class="user-chip">
+                            {% if user.perfil.foto_perfil %}
+                                <img src="{{ user.perfil.foto_perfil.url }}" alt="{{ user.username }}" class="user-avatar">
+                            {% else %}
+                                <div class="user-avatar-placeholder">👤</div>
+                            {% endif %}
+                            <div class="user-info-topbar">
+                                <span class="user-name-topbar">{{ user.get_full_name|default:user.username }}</span>
+                                <span class="user-xp-topbar">⭐ {{ user.perfil.xp }} XP</span>
+                            </div>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="user-chip">Entrar</a>
+                    {% endif %}
+                </div>
             </header>
 
             <div class="{% block page_container_class %}content-wrap{% endblock %}">
@@ -340,5 +597,59 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Gerenciar alternância de tema (Light Mode / Dark Mode)
+        const html = document.documentElement;
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const themeToggleBtnDesktop = document.getElementById('themeToggleBtnDesktop');
+        const THEME_KEY = 'estante-aberta-theme';
+
+        // Inicializar tema ao carregar a página
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
+            applyTheme(savedTheme);
+        }
+
+        // Aplicar tema
+        function applyTheme(theme) {
+            if (theme === 'light') {
+                html.classList.add('light-mode');
+                updateThemeIcon('light');
+            } else {
+                html.classList.remove('light-mode');
+                updateThemeIcon('dark');
+            }
+            localStorage.setItem(THEME_KEY, theme);
+        }
+
+        // Atualizar ícone do botão
+        function updateThemeIcon(theme) {
+            const iconClass = theme === 'light' ? 'bi-sun-fill' : 'bi-moon-fill';
+            if (themeToggleBtn) {
+                themeToggleBtn.innerHTML = `<i class="bi ${iconClass}"></i>`;
+            }
+            if (themeToggleBtnDesktop) {
+                themeToggleBtnDesktop.innerHTML = `<i class="bi ${iconClass}"></i>`;
+            }
+        }
+
+        // Alternar tema
+        function toggleTheme() {
+            const currentTheme = localStorage.getItem(THEME_KEY) || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+        }
+
+        // Event listeners
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', toggleTheme);
+        }
+        if (themeToggleBtnDesktop) {
+            themeToggleBtnDesktop.addEventListener('click', toggleTheme);
+        }
+
+        // Inicializar ao carregar
+        initializeTheme();
+    </script>
 </body>
 </html>
