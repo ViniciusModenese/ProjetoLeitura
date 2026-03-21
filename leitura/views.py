@@ -132,6 +132,10 @@ def minhas_metas(request):
     resenhas_percent = min(int((resenhas_ano / meta_resenhas) * 100), 100)
     faltam_livros = max(meta_livros - livros_ano, 0)
     faltam_resenhas = max(meta_resenhas - resenhas_ano, 0)
+    ritmo_literario = perfil.ofensiva_atual
+    meta_ritmo = 100
+    ritmo_percent = min(int((ritmo_literario / meta_ritmo) * 100), 100)
+    faltam_ritmo = max(meta_ritmo - ritmo_literario, 0)
 
     livros_mes_qs = (
         Livro.objects.filter(criador=request.user, data_cadastro__year=ano_atual)
@@ -192,6 +196,10 @@ def minhas_metas(request):
         'resenhas_percent': resenhas_percent,
         'faltam_livros': faltam_livros,
         'faltam_resenhas': faltam_resenhas,
+        'ritmo_literario': ritmo_literario,
+        'meta_ritmo': meta_ritmo,
+        'ritmo_percent': ritmo_percent,
+        'faltam_ritmo': faltam_ritmo,
         'livros_barras': livros_barras,
         'resenhas_barras': resenhas_barras,
         'total_badges': total_badges,

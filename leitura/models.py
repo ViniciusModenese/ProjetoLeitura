@@ -38,6 +38,8 @@ class Perfil(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
     xp = models.IntegerField(default=0)
     livros_lidos = models.IntegerField(default=0)
+    ofensiva_atual = models.PositiveIntegerField(default=0)
+    ultimo_acesso_ofensiva = models.DateTimeField(null=True, blank=True)
     meta_livros_ano = models.PositiveIntegerField(default=12)
     meta_resenhas = models.PositiveIntegerField(default=50)
     badges = models.ManyToManyField(Badge, blank=True)

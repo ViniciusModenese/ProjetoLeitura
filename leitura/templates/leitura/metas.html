@@ -167,6 +167,21 @@
         color: var(--text-subtle);
         font-size: 0.9rem;
     }
+
+    .ritmo-ring {
+        background: conic-gradient(var(--accent-alt) calc(var(--value) * 1%), rgba(242, 204, 96, 0.18) 0);
+    }
+
+    .ritmo-explain {
+        margin-top: 14px;
+        padding: 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(242, 204, 96, 0.25);
+        background: rgba(242, 204, 96, 0.08);
+        color: var(--text-muted);
+        line-height: 1.45;
+        font-size: 0.94rem;
+    }
 </style>
 
 <div class="metas-shell">
@@ -174,7 +189,7 @@
     <p class="metas-subtitle">Acompanhe suas metas de {{ ano_atual }} e seu ritmo de evolução.</p>
 
     <div class="row g-3 mb-3">
-        <div class="col-lg-4">
+        <div class="col-lg-3">
             <div class="metas-card">
                 <div class="card-title-metas"><i class="bi bi-journal-plus me-2"></i>Meta de Livros no Ano</div>
                 <div class="goal-ring" style="--value: {{ livros_percent }};">
@@ -196,7 +211,7 @@
             </div>
         </div>
 
-        <div class="col-lg-4">
+        <div class="col-lg-3">
             <div class="metas-card">
                 <div class="card-title-metas"><i class="bi bi-chat-quote-fill me-2"></i>Meta de Resenhas</div>
                 <div class="goal-ring" style="--value: {{ resenhas_percent }};">
@@ -215,7 +230,7 @@
             </div>
         </div>
 
-        <div class="col-lg-4">
+        <div class="col-lg-3">
             <div class="metas-card">
                 <div class="card-title-metas"><i class="bi bi-award-fill me-2"></i>Progresso de Medalhas</div>
                 <div class="goal-ring" style="--value: {{ badge_percent }};">
@@ -225,6 +240,25 @@
                     </div>
                 </div>
                 <div class="goal-summary">Este gráfico extra mostra quantas medalhas você já desbloqueou no sistema.</div>
+            </div>
+        </div>
+
+        <div class="col-lg-3" id="ritmo-literario">
+            <div class="metas-card">
+                <div class="card-title-metas"><i class="bi bi-fire me-2"></i>Ritmo Literário</div>
+                <div class="goal-ring ritmo-ring" style="--value: {{ ritmo_percent }};">
+                    <div class="goal-ring-center">
+                        <div class="goal-ring-value">{{ ritmo_literario }}/{{ meta_ritmo }}</div>
+                        <div class="goal-ring-label">meta de 100 dias</div>
+                    </div>
+                </div>
+                <div class="goal-summary">
+                    {% if ritmo_literario >= meta_ritmo %}
+                        Meta de 100 dias concluida. Seu habito de leitura esta consistente.
+                    {% else %}
+                        Faltam {{ faltam_ritmo }} dias para completar sua meta de Ritmo Literario.
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -286,6 +320,14 @@
                 <div class="mini-kpi-label">Meta resenhas</div>
                 <div class="mini-kpi-value">{{ meta_resenhas }}</div>
             </div>
+            <div class="mini-kpi">
+                <div class="mini-kpi-label">Ritmo Literario</div>
+                <div class="mini-kpi-value">{{ ritmo_literario }} dias</div>
+            </div>
+        </div>
+        <div class="ritmo-explain">
+            <strong>O que e Ritmo Literario?</strong><br>
+            O Ritmo Literario representa sua sequencia de dias com acesso ao EstanteAberta. Cada dia com login soma 1 ponto, com limite de 1 por dia. Se voce ficar mais de 24 horas sem entrar, a sequencia reinicia. A meta de 100 dias foi criada para incentivar constancia e transformar a leitura em habito.
         </div>
     </div>
 </div>

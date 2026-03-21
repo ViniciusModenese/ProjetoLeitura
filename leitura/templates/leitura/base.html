@@ -160,6 +160,64 @@
             font-size: 1.1rem;
         }
 
+        .streak-chip {
+            height: 40px;
+            min-width: 62px;
+            padding: 0 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border-soft);
+            background: rgba(242, 204, 96, 0.12);
+            color: var(--accent-alt-light);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .streak-link {
+            text-decoration: none;
+        }
+
+        .streak-chip i {
+            color: var(--accent-alt);
+            font-size: 1rem;
+        }
+
+        .streak-link:hover .streak-chip {
+            border-color: var(--accent-alt);
+            background: rgba(242, 204, 96, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .top-info-chip {
+            height: 40px;
+            min-width: 56px;
+            padding: 0 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border-soft);
+            background: var(--bg-panel-soft);
+            color: var(--text-main);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .top-info-chip i {
+            color: var(--accent);
+        }
+
+        .top-info-chip:hover {
+            border-color: var(--accent);
+            color: var(--accent-light);
+            background: rgba(88, 166, 255, 0.12);
+        }
+
         .theme-toggle-btn:hover {
             background: rgba(88, 166, 255, 0.15);
             border-color: var(--accent);
@@ -470,6 +528,16 @@
                 </a>
             </div>
             <div class="d-flex align-items-center gap-2">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'minhas_metas' %}#ritmo-literario" class="streak-link" title="Ver Ritmo Literario">
+                        <span class="streak-chip">
+                            <i class="bi bi-fire"></i>{{ user.perfil.ofensiva_atual }}
+                        </span>
+                    </a>
+                    <a href="{% url 'minhas_metas' %}" class="top-info-chip" title="Meta de livros do ano">
+                        <i class="bi bi-journal-check"></i>{{ user.perfil.meta_livros_ano }}
+                    </a>
+                {% endif %}
                 <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Alternar tema">
                     <i class="bi bi-moon-fill"></i>
                 </button>
@@ -576,6 +644,19 @@
                     <span class="brand-wordmark">Estante Aberta</span>
                 </a>
                 <div class="d-flex align-items-center gap-2">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'minhas_metas' %}#ritmo-literario" class="streak-link" title="Ver Ritmo Literario">
+                            <span class="streak-chip">
+                                <i class="bi bi-fire"></i>{{ user.perfil.ofensiva_atual }}
+                            </span>
+                        </a>
+                        <a href="{% url 'minhas_metas' %}" class="top-info-chip" title="Meta de livros do ano">
+                            <i class="bi bi-journal-check"></i>{{ user.perfil.meta_livros_ano }}
+                        </a>
+                        <a href="{% url 'perfil' %}" class="top-info-chip" title="Medalhas desbloqueadas">
+                            <i class="bi bi-award"></i>{{ user.perfil.badges.count }}
+                        </a>
+                    {% endif %}
                     <button type="button" class="theme-toggle-btn" id="themeToggleBtnDesktop" title="Alternar tema">
                         <i class="bi bi-moon-fill"></i>
                     </button>

@@ -2,6 +2,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.utils import timezone
+
+from datetime import timedelta
 
 from .models import Livro, Resenha, Badge
 
@@ -113,3 +116,33 @@ class CadastroLivroTests(TestCase):
 		self.assertEqual(resenha.usuario, self.user)
 		self.assertEqual(resenha.nota, 5)
 		self.assertEqual(self.user.perfil.xp, 110)
+
+
+class OfensivaTests(TestCase):
+	def setUp(self):
+		self.user = User.objects.create_user(username='streak_user', password='senha12345')
+		self.client.login(username='streak_user', password='senha12345')
+
+	def test_primeiro_acesso_inicia_ofensiva_em_um(self):
+		self.client.get(reverse('home'))
+		self.user.refresh_from_db()
+		self.assertEqual(self.user.perfil.ofensiva_atual, 1)
+
+	def test_mesmo_dia_nao_incrementa_novamente(self):
+		agora = timezone.now()
+		self.user.perfil.ofensiva_atual = 3
+		self.user.perfil.ultimo_acesso_ofensiva = agora - timedelta(hours=2)
+		self.user.perfil.save(update_fields=['ofensiva_atual', 'ultimo_acesso_ofensiva'])
+
+		self.client.get(reverse('home'))
+		self.user.refresh_from_db()
+		self.assertEqual(self.user.perfil.ofensiva_atual, 3)
+
+	def test_mais_de_vinte_quatro_horas_reinicia_ofensiva(self):
+		self.user.perfil.ofensiva_atual = 7
+		self.user.perfil.ultimo_acesso_ofensiva = timezone.now() - timedelta(hours=25)
+		self.user.perfil.save(update_fields=['ofensiva_atual', 'ultimo_acesso_ofensiva'])
+
+		self.client.get(reverse('home'))
+		self.user.refresh_from_db()
+		self.assertEqual(self.user.perfil.ofensiva_atual, 1)
