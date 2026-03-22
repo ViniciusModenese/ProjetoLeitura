@@ -349,6 +349,36 @@
             background-color: rgba(88, 166, 255, 0.12);
         }
 
+        .sidebar-link-btn {
+            width: 100%;
+            border: 0;
+            background: transparent;
+            text-align: left;
+        }
+
+        .sidebar-link-danger {
+            color: var(--danger);
+        }
+
+        .sidebar-link-danger .nav-icon {
+            color: var(--danger);
+            background: rgba(248, 81, 73, 0.12);
+            border-color: rgba(248, 81, 73, 0.28);
+        }
+
+        .sidebar-link-danger:hover,
+        .sidebar-link-danger:focus {
+            color: var(--danger);
+            background-color: rgba(248, 81, 73, 0.14);
+        }
+
+        .sidebar-link-danger:hover .nav-icon,
+        .sidebar-link-danger:focus .nav-icon {
+            color: #ffffff;
+            background: var(--danger);
+            border-color: var(--danger);
+        }
+
         .sidebar-cta {
             display: block;
             text-align: center;
@@ -378,7 +408,7 @@
             flex: 1;
             width: 100%;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .app-main::before {
@@ -417,6 +447,9 @@
             justify-content: space-between;
             align-items: center;
             font-size: 1.02rem;
+            position: relative;
+            z-index: 1040;
+            overflow: visible;
             transition: background-color 0.3s, border-color 0.3s;
         }
 
@@ -434,10 +467,82 @@
             transition: 0.2s;
         }
 
+        .user-chip-button {
+            border: 1px solid var(--border-soft);
+            cursor: pointer;
+        }
+
+        .user-chip-button.dropdown-toggle::after {
+            margin-left: 8px;
+        }
+
+        .user-chip-mobile {
+            max-width: 190px;
+            padding: 6px 10px;
+        }
+
+        .user-chip-mobile .user-avatar,
+        .user-chip-mobile .user-avatar-placeholder {
+            width: 32px;
+            height: 32px;
+        }
+
+        .user-chip-mobile .user-name-topbar {
+            max-width: 95px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .user-chip-mobile .user-xp-topbar {
+            display: none;
+        }
+
         .user-chip:hover {
             border-color: var(--accent);
             background-color: rgba(88, 166, 255, 0.1);
             color: var(--accent-light);
+        }
+
+        .profile-dropdown-menu {
+            border-radius: 12px;
+            border: 1px solid var(--border-soft);
+            background: var(--bg-panel);
+            min-width: 220px;
+            padding: 8px;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.2);
+            z-index: 2000;
+        }
+
+        .profile-dropdown-menu .dropdown-item {
+            border-radius: 8px;
+            color: var(--text-main);
+            padding: 9px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .profile-dropdown-menu .dropdown-item:hover,
+        .profile-dropdown-menu .dropdown-item:focus {
+            color: var(--accent-light);
+            background: rgba(88, 166, 255, 0.12);
+        }
+
+        .profile-dropdown-menu .dropdown-divider {
+            border-top-color: var(--border-soft);
+            margin: 6px 0;
+        }
+
+        .profile-dropdown-menu .dropdown-item.text-danger {
+            color: var(--danger) !important;
+        }
+
+        .profile-dropdown-menu .dropdown-item.text-danger:hover,
+        .profile-dropdown-menu .dropdown-item.text-danger:focus {
+            background: rgba(248, 81, 73, 0.14);
+            color: var(--danger) !important;
         }
 
         .user-avatar {
@@ -542,11 +647,36 @@
                     <i class="bi bi-moon-fill"></i>
                 </button>
                 {% if user.is_authenticated %}
-                    <span class="text-info small">⭐ {{ user.perfil.xp }} XP</span>
-                    <form action="{% url 'logout' %}" method="post" class="d-inline">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-outline-info">Sair</button>
-                    </form>
+                    <div class="dropdown">
+                        <button class="user-chip user-chip-button user-chip-mobile dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {% if user.perfil.foto_perfil %}
+                                <img src="{{ user.perfil.foto_perfil.url }}" alt="{{ user.username }}" class="user-avatar">
+                            {% else %}
+                                <div class="user-avatar-placeholder">👤</div>
+                            {% endif %}
+                            <div class="user-info-topbar">
+                                <span class="user-name-topbar">{{ user.get_full_name|default:user.username }}</span>
+                                <span class="user-xp-topbar">⭐ {{ user.perfil.xp }} XP</span>
+                            </div>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end profile-dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'perfil' %}">
+                                    <i class="bi bi-person-circle"></i>Ver perfil
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="{% url 'logout' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{% url 'login' %}">
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="bi bi-box-arrow-right"></i>Sair
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
                 {% else %}
                     <a class="btn btn-sm btn-outline-info" href="{% url 'login' %}">Login</a>
                 {% endif %}
@@ -562,32 +692,36 @@
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
         </div>
         <div class="offcanvas-body d-flex flex-column">
-            <a class="sidebar-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}" data-bs-dismiss="offcanvas">
+            <a class="sidebar-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">
                 <span class="nav-icon"><i class="bi bi-grid-1x2-fill"></i></span>
                 <span>Dashboard</span>
             </a>
-            <a class="sidebar-link {% if request.path == '/biblioteca/' %}active{% endif %}" href="{% url 'biblioteca' %}" data-bs-dismiss="offcanvas">
+            <a class="sidebar-link {% if request.path == '/biblioteca/' %}active{% endif %}" href="{% url 'biblioteca' %}">
                 <span class="nav-icon"><i class="bi bi-collection-fill"></i></span>
                 <span>Biblioteca</span>
             </a>
-            <a class="sidebar-link {% if request.path == '/metas/' %}active{% endif %}" href="{% url 'minhas_metas' %}" data-bs-dismiss="offcanvas">
+            <a class="sidebar-link {% if request.path == '/metas/' %}active{% endif %}" href="{% url 'minhas_metas' %}">
                 <span class="nav-icon"><i class="bi bi-bullseye"></i></span>
                 <span>Minhas Metas</span>
             </a>
             {% if user.is_authenticated %}
-                <a class="sidebar-cta {% if request.path == '/livros/novo/' %}active{% endif %}" href="{% url 'cadastrar_livro' %}" data-bs-dismiss="offcanvas">Cadastrar Novo Livro</a>
+                <a class="sidebar-cta {% if request.path == '/livros/novo/' %}active{% endif %}" href="{% url 'cadastrar_livro' %}">Cadastrar Novo Livro</a>
             {% endif %}
 
             <div class="sidebar-bottom mt-auto">
                 {% if user.is_authenticated %}
                     <div class="small text-secondary mb-2">Conectado como {{ user.username }}</div>
-                    <form action="{% url 'logout' %}" method="post" class="d-grid">
+                    <form action="{% url 'logout' %}" method="post">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-info btn-sm">Sair</button>
+                        <input type="hidden" name="next" value="{% url 'login' %}">
+                        <button type="submit" class="sidebar-link sidebar-link-btn sidebar-link-danger">
+                            <span class="nav-icon"><i class="bi bi-box-arrow-right"></i></span>
+                            <span>Sair</span>
+                        </button>
                     </form>
                 {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-outline-info btn-sm w-100 mb-2" data-bs-dismiss="offcanvas">Login</a>
-                    <a href="{% url 'cadastro' %}" class="btn btn-info btn-sm w-100" data-bs-dismiss="offcanvas">Criar conta</a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-info btn-sm w-100 mb-2">Login</a>
+                    <a href="{% url 'cadastro' %}" class="btn btn-info btn-sm w-100">Criar conta</a>
                 {% endif %}
             </div>
         </div>
@@ -619,18 +753,7 @@
 
             <div class="sidebar-bottom">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'perfil' %}" class="sidebar-link" style="margin-bottom: 12px;">
-                        {% if user.perfil.foto_perfil %}
-                            <img src="{{ user.perfil.foto_perfil.url }}" alt="{{ user.username }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent);">
-                        {% else %}
-                            <span style="width: 32px; height: 32px; border-radius: 50%; background: rgba(88, 166, 255, 0.15); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">👤</span>
-                        {% endif %}
-                        <span>{{ user.get_full_name|default:user.username }}</span>
-                    </a>
-                    <form action="{% url 'logout' %}" method="post" class="d-grid">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-info btn-sm">Sair</button>
-                    </form>
+                    <div class="small text-secondary">Conectado como {{ user.username }}</div>
                 {% else %}
                     <a href="{% url 'login' %}" class="btn btn-outline-info btn-sm w-100 mb-2">Login</a>
                     <a href="{% url 'cadastro' %}" class="btn btn-info btn-sm w-100">Criar conta</a>
@@ -661,17 +784,36 @@
                         <i class="bi bi-moon-fill"></i>
                     </button>
                     {% if user.is_authenticated %}
-                        <a href="{% url 'perfil' %}" class="user-chip">
-                            {% if user.perfil.foto_perfil %}
-                                <img src="{{ user.perfil.foto_perfil.url }}" alt="{{ user.username }}" class="user-avatar">
-                            {% else %}
-                                <div class="user-avatar-placeholder">👤</div>
-                            {% endif %}
-                            <div class="user-info-topbar">
-                                <span class="user-name-topbar">{{ user.get_full_name|default:user.username }}</span>
-                                <span class="user-xp-topbar">⭐ {{ user.perfil.xp }} XP</span>
-                            </div>
-                        </a>
+                        <div class="dropdown">
+                            <button class="user-chip user-chip-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {% if user.perfil.foto_perfil %}
+                                    <img src="{{ user.perfil.foto_perfil.url }}" alt="{{ user.username }}" class="user-avatar">
+                                {% else %}
+                                    <div class="user-avatar-placeholder">👤</div>
+                                {% endif %}
+                                <div class="user-info-topbar">
+                                    <span class="user-name-topbar">{{ user.get_full_name|default:user.username }}</span>
+                                    <span class="user-xp-topbar">⭐ {{ user.perfil.xp }} XP</span>
+                                </div>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end profile-dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'perfil' %}">
+                                        <i class="bi bi-person-circle"></i>Ver perfil
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form action="{% url 'logout' %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{% url 'login' %}">
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="bi bi-box-arrow-right"></i>Sair
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                     {% else %}
                         <a href="{% url 'login' %}" class="user-chip">Entrar</a>
                     {% endif %}

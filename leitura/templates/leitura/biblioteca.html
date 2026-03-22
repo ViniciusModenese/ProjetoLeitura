@@ -16,12 +16,28 @@
         transition: 0.28s;
         border-radius: 12px;
         border: 1px solid var(--border-soft);
+        cursor: pointer;
+        overflow: hidden;
     }
 
     .book-grid-card:hover {
-        transform: translateY(-5px);
-        border-color: rgba(88, 166, 255, 0.35);
-        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+        transform: translateY(-6px) scale(1.01);
+        border-color: rgba(88, 166, 255, 0.55);
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.3);
+    }
+
+    .book-grid-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(88, 166, 255, 0.04) 0%, rgba(88, 166, 255, 0.1) 100%);
+        opacity: 0;
+        transition: opacity 0.28s;
+        pointer-events: none;
+    }
+
+    .book-grid-card:hover::after {
+        opacity: 1;
     }
 
     .library-title {
@@ -38,6 +54,80 @@
     .book-grid-card .card-text {
         font-size: 1rem;
     }
+
+    .book-card-link {
+        border-radius: 12px;
+    }
+
+    .card-cta-label {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        font-weight: 700;
+        border-radius: 8px;
+        background-color: var(--accent);
+        color: #ffffff;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.96rem;
+        transition: background-color 0.2s;
+    }
+
+    .book-grid-card:hover .card-cta-label {
+        background-color: var(--accent-light);
+    }
+
+    .book-cover {
+        height: 440px;
+        object-fit: cover;
+    }
+
+    @media (max-width: 575.98px) {
+        .library-shell .row {
+            --bs-gutter-x: 0.75rem;
+            --bs-gutter-y: 0.75rem;
+        }
+
+        .book-cover {
+            height: 230px;
+        }
+
+        .book-grid-card .card-body {
+            padding: 0.75rem;
+        }
+
+        .book-grid-card .card-footer {
+            padding: 0 0.75rem 0.75rem !important;
+        }
+
+        .book-grid-card .card-title {
+            font-size: 0.98rem;
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .book-grid-card .card-text {
+            font-size: 0.82rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .book-grid-card .card-text:last-of-type {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .book-grid-card .btn {
+            font-size: 0.82rem;
+            padding: 0.42rem 0.5rem;
+        }
+
+        .card-cta-label {
+            font-size: 0.82rem;
+            padding: 0.42rem 0.5rem;
+        }
+    }
 </style>
 
 <div class="library-shell">
@@ -46,12 +136,12 @@
         <span style="color: var(--text-muted); font-size: 1rem;">{{ livros|length }} livro{{ livros|length|pluralize }}</span>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+    <div class="row row-cols-2 row-cols-md-2 row-cols-xl-3 g-4">
         {% for livro in livros %}
             <div class="col">
-                <div class="card h-100 shadow border-0 book-grid-card">
+                <div class="card h-100 shadow border-0 book-grid-card position-relative">
                     {% if livro.capa %}
-                        <img src="{{ livro.capa.url }}" class="card-img-top" alt="{{ livro.titulo }}" style="height: 440px; object-fit: cover;">
+                        <img src="{{ livro.capa.url }}" class="card-img-top book-cover" alt="{{ livro.titulo }}">
                     {% endif %}
                     <div class="card-body">
                         <h5 class="card-title" style="color: var(--accent-alt-light);">{{ livro.titulo }}</h5>
@@ -59,8 +149,9 @@
                         <p class="card-text" style="color: var(--text-main);">{{ livro.sinopse|truncatewords:20 }}</p>
                     </div>
                     <div class="card-footer bg-transparent border-0 pb-3">
-                        <a href="{% url 'detalhes_livro' livro.pk %}" class="btn w-100 fw-bold" style="background-color: var(--accent); color: #ffffff;">Ler Resenhas</a>
+                        <span class="card-cta-label">Ler Resenhas</span>
                     </div>
+                    <a href="{% url 'detalhes_livro' livro.pk %}" class="stretched-link book-card-link" aria-label="Abrir detalhes de {{ livro.titulo }}"></a>
                 </div>
             </div>
         {% empty %}
