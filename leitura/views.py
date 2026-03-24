@@ -3,22 +3,93 @@ from django.contrib.auth import authenticate, update_session_auth_hash
 from .models import Livro, Perfil, Badge, Resenha
 from django.urls import reverse_lazy
 from django.views import generic
-from django.db.models import Avg, Count
+from django.db.models import Avg, Count, Prefetch
+from django.db.models import OuterRef, Subquery
 from django.db.models.functions import ExtractMonth
 from django.contrib.auth.decorators import login_required
 from .forms import ResenhaForm, CadastroLivroForm, EditarPerfilForm, AlterarSenhaForm, CadastroUsuarioForm
 from datetime import datetime
+import unicodedata
+
+
+def badges_nivel_qs():
+    return Badge.objects.filter(nome__startswith='Nivel ').order_by('xp_minimo', 'id')
+
+
+def _normalizar_texto(texto):
+    texto = unicodedata.normalize('NFKD', (texto or ''))
+    texto = ''.join(ch for ch in texto if not unicodedata.combining(ch))
+    return texto.lower()
+
+
+def _categoria_dinamica_livro(livro):
+    base = _normalizar_texto(f"{livro.titulo} {livro.sinopse}")
+
+    regras = [
+        ('quero_desidratar_de_chorar', 'Quero desidratar de chorar', ['triste', 'dor', 'perda', 'lagrima', 'emocion', 'drama']),
+        ('quero_dormir_de_luz_acesa', 'Quero dormir de luz acesa', ['terror', 'horror', 'medo', 'sombr', 'monstro', 'assust']),
+        ('quero_fugir_pra_outro_mundo', 'Quero fugir pra outro mundo', ['fantasia', 'magia', 'elfo', 'dragao', 'reino', 'mitolog']),
+        ('quero_viajar_pro_impossivel', 'Quero viajar pro impossivel', ['ficcao cientifica', 'futuro', 'espaco', 'distop', 'rob', 'tecnolog']),
+        ('quero_brincar_de_detetive', 'Quero brincar de detetive', ['misterio', 'investiga', 'crime', 'detetive', 'enigma']),
+        ('quero_adrenalina_em_cada_capitulo', 'Quero adrenalina em cada capitulo', ['aventur', 'jornada', 'guerra', 'sobreviv', 'batalha']),
+        ('quero_borboletas_no_estomago', 'Quero borboletas no estomago', ['amor', 'romance', 'apaixon', 'relacion']),
+        ('quero_parecer_culto_sem_esforco', 'Quero parecer culto sem esforco', ['filosof', 'politic', 'classico', 'sociedade', 'reflex']),
+        ('quero_colocar_a_vida_nos_trilhos', 'Quero colocar a vida nos trilhos', ['desenvolvimento pessoal', 'habito', 'mindset', 'sucesso', 'autoconhecimento']),
+    ]
+
+    for slug, nome, pistas in regras:
+        if any(pista in base for pista in pistas):
+            return slug, nome
+
+    return 'quero_uma_historia_que_me_prenda', 'Quero uma historia que me prenda'
+
+
+def _ano_lancamento_livro(livro):
+    if livro.ano_publicacao and 1400 <= livro.ano_publicacao <= datetime.now().year + 1:
+        return livro.ano_publicacao
+    return None
+
+
+def _icone_categoria(slug):
+    icones = {
+        'quero_desidratar_de_chorar': 'bi-emoji-tear-fill',
+        'quero_dormir_de_luz_acesa': 'bi-moon-stars-fill',
+        'quero_fugir_pra_outro_mundo': 'bi-magic',
+        'quero_viajar_pro_impossivel': 'bi-rocket-takeoff-fill',
+        'quero_brincar_de_detetive': 'bi-search-heart-fill',
+        'quero_adrenalina_em_cada_capitulo': 'bi-lightning-charge-fill',
+        'quero_borboletas_no_estomago': 'bi-heart-fill',
+        'quero_parecer_culto_sem_esforco': 'bi-journal-richtext',
+        'quero_colocar_a_vida_nos_trilhos': 'bi-compass-fill',
+        'quero_uma_historia_que_me_prenda': 'bi-bookmark-star-fill',
+    }
+    return icones.get(slug, 'bi-bookmark-star-fill')
+
+
+def sincronizar_badges_nivel(perfil):
+    """Mantem as badges de nivel coerentes com o XP atual do perfil."""
+    badges_nivel = list(badges_nivel_qs())
+    if not badges_nivel:
+        return
+
+    ids_desbloqueadas = {b.id for b in badges_nivel if b.xp_minimo <= perfil.xp}
+    ids_nivel = {b.id for b in badges_nivel}
+    ids_atuais_nivel = set(perfil.badges.filter(id__in=ids_nivel).values_list('id', flat=True))
+
+    ids_para_add = ids_desbloqueadas - ids_atuais_nivel
+    ids_para_remove = ids_atuais_nivel - ids_desbloqueadas
+
+    if ids_para_add:
+        perfil.badges.add(*Badge.objects.filter(id__in=ids_para_add))
+    if ids_para_remove:
+        perfil.badges.remove(*Badge.objects.filter(id__in=ids_para_remove))
 
 
 def atualizar_xp_e_badges(usuario, xp_ganho=10):
     perfil = usuario.perfil
     perfil.xp += xp_ganho
     perfil.save()
-
-    badges_disponiveis = Badge.objects.filter(xp_minimo__lte=perfil.xp)
-    for badge in badges_disponiveis:
-        if badge not in perfil.badges.all():
-            perfil.badges.add(badge)
+    sincronizar_badges_nivel(perfil)
 
 def home(request):
     livros = Livro.objects.annotate(
@@ -27,7 +98,26 @@ def home(request):
     ).order_by('-data_cadastro')
 
     destaques_semana = livros[:3]
-    ultimas_resenhas = Resenha.objects.select_related('usuario', 'livro').order_by('-data_postagem')[:6]
+    # Pega apenas 1 resenha por livro (a mais recente de cada livro), e então exibe as mais recentes entre elas.
+    ultima_resenha_por_livro = Livro.objects.annotate(
+        ultima_resenha_id=Subquery(
+            Resenha.objects.filter(livro=OuterRef('pk')).order_by('-data_postagem').values('id')[:1]
+        )
+    ).filter(ultima_resenha_id__isnull=False).values('ultima_resenha_id')
+
+    ultimas_resenhas = Resenha.objects.select_related('usuario', 'livro').filter(
+        id__in=Subquery(ultima_resenha_por_livro)
+    ).order_by('-data_postagem')[:6]
+
+    user_badges_map = {}
+    if ultimas_resenhas:
+        user_ids = list({r.usuario_id for r in ultimas_resenhas})
+        perfis_resenhas = Perfil.objects.filter(usuario_id__in=user_ids).prefetch_related(
+            Prefetch('badges', queryset=badges_nivel_qs(), to_attr='badges_nivel_prefetched')
+        )
+        for perfil_item in perfis_resenhas:
+            badge_usuario = perfil_item.badges_nivel_prefetched[-1] if perfil_item.badges_nivel_prefetched else None
+            user_badges_map[perfil_item.usuario_id] = badge_usuario
 
     xp_atual = 0
     proxima_badge = None
@@ -35,11 +125,13 @@ def home(request):
     progress_percent = 0
     progress_current_xp = 0
     progress_target_xp = 0
+    ultima_badge_nivel = None
 
     if request.user.is_authenticated:
         perfil = request.user.perfil
+        sincronizar_badges_nivel(perfil)
         xp_atual = perfil.xp
-        proxima_badge = Badge.objects.filter(xp_minimo__gt=xp_atual).order_by('xp_minimo').first()
+        proxima_badge = badges_nivel_qs().filter(xp_minimo__gt=xp_atual).first()
 
         if proxima_badge:
             faltam_xp = proxima_badge.xp_minimo - xp_atual
@@ -51,6 +143,8 @@ def home(request):
             progress_current_xp = xp_atual
             progress_target_xp = xp_atual
 
+        ultima_badge_nivel = perfil.badges.filter(nome__startswith='Nivel ').order_by('xp_minimo', 'id').last()
+
     context = {
         'destaques_semana': destaques_semana,
         'ultimas_resenhas': ultimas_resenhas,
@@ -60,13 +154,57 @@ def home(request):
         'progress_percent': progress_percent,
         'progress_current_xp': progress_current_xp,
         'progress_target_xp': progress_target_xp,
+        'ultima_badge_nivel': ultima_badge_nivel,
+        'user_badges_map': user_badges_map,
     }
     return render(request, 'leitura/home.html', context)
 
 
 def biblioteca(request):
-    livros = Livro.objects.order_by('-data_cadastro')
-    return render(request, 'leitura/biblioteca.html', {'livros': livros})
+    categoria_selecionada = (request.GET.get('categoria') or '').strip()
+    ano_selecionado = (request.GET.get('ano') or '').strip()
+
+    livros_base = list(
+        Livro.objects.annotate(media_nota=Avg('resenhas__nota')).order_by('-data_cadastro')
+    )
+    categorias = {}
+    anos = set()
+
+    for livro in livros_base:
+        cat_slug, cat_nome = _categoria_dinamica_livro(livro)
+        ano = _ano_lancamento_livro(livro)
+
+        livro.categoria_slug = cat_slug
+        livro.categoria_nome = cat_nome
+        livro.categoria_icone = _icone_categoria(cat_slug)
+        livro.ano_lancamento = ano
+
+        categorias[cat_slug] = cat_nome
+        if ano:
+            anos.add(ano)
+
+    livros_filtrados = livros_base
+    if categoria_selecionada:
+        livros_filtrados = [l for l in livros_filtrados if getattr(l, 'categoria_slug', '') == categoria_selecionada]
+
+    if ano_selecionado and ano_selecionado.isdigit():
+        ano_int = int(ano_selecionado)
+        livros_filtrados = [l for l in livros_filtrados if getattr(l, 'ano_lancamento', None) == ano_int]
+
+    categorias_ordenadas = sorted(categorias.items(), key=lambda item: item[1])
+    categorias_disponiveis = [
+        (slug, nome, _icone_categoria(slug))
+        for slug, nome in categorias_ordenadas
+    ]
+
+    context = {
+        'livros': livros_filtrados,
+        'categorias_disponiveis': categorias_disponiveis,
+        'anos_disponiveis': sorted(anos, reverse=True),
+        'categoria_selecionada': categoria_selecionada,
+        'ano_selecionado': int(ano_selecionado) if ano_selecionado.isdigit() else None,
+    }
+    return render(request, 'leitura/biblioteca.html', context)
 
 def detalhes_livro(request, pk):
     livro = get_object_or_404(Livro, pk=pk)
@@ -213,6 +351,7 @@ def minhas_metas(request):
 def perfil(request):
     """View para exibir e editar o perfil do usuário."""
     perfil_obj = request.user.perfil
+    sincronizar_badges_nivel(perfil_obj)
     form_perfil = None
     form_senha = None
     mensagem = ''
@@ -258,7 +397,7 @@ def perfil(request):
     if not form_senha:
         form_senha = AlterarSenhaForm()
 
-    all_badges = list(Badge.objects.order_by('xp_minimo', 'id')[:10])
+    all_badges = list(badges_nivel_qs()[:10])
     owned_badge_ids = list(perfil_obj.badges.values_list('id', flat=True))
 
     # Garante uma grade fixa de 10 slots, mesmo se houver menos badges cadastradas.

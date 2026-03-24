@@ -305,6 +305,19 @@
         transition: transform 0.2s;
     }
 
+    .badge-img-fallback {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        color: var(--accent-light);
+        border: 1px solid var(--border-soft);
+        background: rgba(88, 166, 255, 0.12);
+    }
+
     .badge-item:hover .badge-img {
         transform: scale(1.1);
     }
@@ -386,9 +399,27 @@
         transition: transform 0.28s ease, filter 0.28s ease;
     }
 
+    .badge-gallery-placeholder {
+        width: 250px;
+        height: 250px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4.2rem;
+        color: var(--accent-light);
+        border: 1px solid var(--border-soft);
+        background: rgba(88, 166, 255, 0.12);
+        transition: transform 0.28s ease;
+    }
+
     .badge-gallery-image-wrap:hover img {
         transform: scale(1.08);
         filter: drop-shadow(0 0 24px rgba(88, 166, 255, 0.35));
+    }
+
+    .badge-gallery-image-wrap:hover .badge-gallery-placeholder {
+        transform: scale(1.08);
     }
 
     .badge-gallery-name {
@@ -573,6 +604,8 @@
                         <div class="badge-item badge-openable" data-badge-name="{{ badge.nome }}" data-badge-desc="{{ badge.descricao }}" data-badge-img="{% if badge.imagem %}{{ badge.imagem.url }}{% endif %}" data-badge-locked="0" data-badge-xp="{{ badge.xp_minimo }}">
                             {% if badge.imagem %}
                                 <img src="{{ badge.imagem.url }}" alt="{{ badge.nome }}" class="badge-img" title="{{ badge.descricao }}" data-bs-toggle="tooltip">
+                            {% else %}
+                                <div class="badge-img-fallback" title="{{ badge.descricao }}" data-bs-toggle="tooltip">🏅</div>
                             {% endif %}
                             <div class="badge-name">{{ badge.nome }}</div>
                         </div>
@@ -581,6 +614,8 @@
                             <span class="badge-lock"><i class="bi bi-lock-fill"></i></span>
                             {% if badge.imagem %}
                                 <img src="{{ badge.imagem.url }}" alt="{{ badge.nome }}" class="badge-img">
+                            {% else %}
+                                <div class="badge-img-fallback">🏅</div>
                             {% endif %}
                             <div class="badge-name">{{ badge.nome }}</div>
                             <div class="badge-locked-text">Desbloqueia em {{ badge.xp_minimo }} XP</div>
@@ -608,6 +643,7 @@
                 <div class="modal-body">
                     <div class="badge-gallery-image-wrap" id="badgeGalleryImageWrap">
                         <img id="badgeGalleryImage" src="" alt="Medalha">
+                        <div id="badgeGalleryPlaceholder" class="badge-gallery-placeholder d-none">🏅</div>
                     </div>
                     <div class="badge-gallery-name" id="badgeGalleryName"></div>
                     <div class="badge-gallery-desc" id="badgeGalleryDesc"></div>
@@ -849,6 +885,7 @@
             })
             const badgeGalleryImageWrap = document.getElementById('badgeGalleryImageWrap')
             const badgeGalleryImage = document.getElementById('badgeGalleryImage')
+            const badgeGalleryPlaceholder = document.getElementById('badgeGalleryPlaceholder')
             const badgeGalleryName = document.getElementById('badgeGalleryName')
             const badgeGalleryDesc = document.getElementById('badgeGalleryDesc')
             const badgeGalleryStatus = document.getElementById('badgeGalleryStatus')
@@ -870,8 +907,16 @@
 
                 if (img) {
                     badgeGalleryImage.src = img
+                    badgeGalleryImage.classList.remove('d-none')
+                    if (badgeGalleryPlaceholder) {
+                        badgeGalleryPlaceholder.classList.add('d-none')
+                    }
                 } else {
                     badgeGalleryImage.src = ''
+                    badgeGalleryImage.classList.add('d-none')
+                    if (badgeGalleryPlaceholder) {
+                        badgeGalleryPlaceholder.classList.remove('d-none')
+                    }
                 }
 
                 if (locked) {

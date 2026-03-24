@@ -1,4 +1,5 @@
 {% extends 'leitura/base.html' %}
+{% load static %}
 
 {% block title %}Biblioteca - EstanteAberta{% endblock %}
 {% block page_container_class %}container-fluid px-lg-4 px-2 mt-3{% endblock %}
@@ -8,7 +9,246 @@
     .library-shell {
         max-width: none;
         width: 100%;
-        margin: 0 auto 30px;
+        margin: 0 auto 54px;
+        position: relative;
+        overflow: visible;
+        border-radius: 18px;
+        padding: 20px 20px 30px;
+        background: linear-gradient(180deg, rgba(13, 17, 23, 0.72), rgba(13, 17, 23, 0.82));
+        border: 1px solid var(--border-soft);
+    }
+
+    html.light-mode .library-shell {
+        background: linear-gradient(180deg, rgba(248, 250, 252, 0.94), rgba(241, 245, 249, 0.95));
+        border-color: rgba(15, 23, 42, 0.12);
+    }
+
+    .library-shell::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(180deg, rgba(13, 17, 23, 0.76) 0%, rgba(13, 17, 23, 0.9) 100%),
+            url("{% static 'img/fundo_biblioteca.png' %}");
+        background-size: cover, cover;
+        background-position: center, center;
+        background-attachment: scroll, fixed;
+        opacity: 0.22;
+        z-index: 0;
+        pointer-events: none;
+        transform: scale(1.02);
+    }
+
+    html.light-mode .library-shell::before {
+        background-image:
+            linear-gradient(180deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.94) 100%),
+            url("{% static 'img/fundo_biblioteca.png' %}");
+        opacity: 0.34;
+    }
+
+    .library-shell > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    .library-topbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+
+    .library-title {
+        color: var(--accent-alt);
+        font-size: clamp(1.9rem, 2.1vw, 2.4rem);
+        font-weight: 800;
+        margin-bottom: 0;
+    }
+
+    .book-count {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        font-weight: 700;
+    }
+
+    .filters-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 24px;
+        padding: 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.68), rgba(30, 41, 59, 0.45));
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 28px rgba(2, 6, 23, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        position: relative;
+        z-index: 30;
+    }
+
+    html.light-mode .filters-wrap {
+        border: 1px solid rgba(15, 23, 42, 0.12);
+        background: linear-gradient(135deg, rgba(248, 250, 252, 0.96), rgba(241, 245, 249, 0.92));
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    .library-grid {
+        position: relative;
+        z-index: 5;
+        margin-top: 4px;
+    }
+
+    .filters-wrap .dropdown {
+        position: relative;
+    }
+
+    .filters-wrap .dropdown-menu {
+        z-index: 1080;
+    }
+
+    .filter-btn {
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        border-radius: 12px;
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.86), rgba(15, 23, 42, 0.65));
+        color: #dbeafe;
+        padding: 10px 12px;
+        font-weight: 700;
+        min-width: 230px;
+        text-align: left;
+        letter-spacing: 0.01em;
+        transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.2s, background 0.2s;
+    }
+
+    html.light-mode .filter-btn {
+        border-color: rgba(148, 163, 184, 0.45);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.96));
+        color: #0f172a;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    .filter-btn:hover,
+    .filter-btn:focus {
+        border-color: rgba(96, 165, 250, 0.8);
+        color: #eff6ff;
+        transform: translateY(-2px);
+        background: linear-gradient(180deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.72));
+        box-shadow: 0 12px 24px rgba(2, 6, 23, 0.35);
+    }
+
+    html.light-mode .filter-btn:hover,
+    html.light-mode .filter-btn:focus {
+        border-color: rgba(59, 130, 246, 0.45);
+        color: #1d4ed8;
+        background: linear-gradient(180deg, rgba(239, 246, 255, 0.98), rgba(219, 234, 254, 0.92));
+        box-shadow: 0 10px 18px rgba(59, 130, 246, 0.14);
+    }
+
+    .filter-menu {
+        background: rgba(15, 23, 42, 0.96);
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        border-radius: 12px;
+        padding: 8px;
+        max-height: 310px;
+        overflow: auto;
+        min-width: 250px;
+        box-shadow: 0 14px 32px rgba(2, 6, 23, 0.45);
+        scrollbar-width: thin;
+        scrollbar-color: rgba(96, 165, 250, 0.75) rgba(30, 41, 59, 0.55);
+    }
+
+    html.light-mode .filter-menu {
+        background: rgba(248, 250, 252, 0.98);
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        box-shadow: 0 14px 24px rgba(15, 23, 42, 0.12);
+        scrollbar-color: rgba(59, 130, 246, 0.6) rgba(203, 213, 225, 0.8);
+    }
+
+    .filter-menu::-webkit-scrollbar {
+        width: 11px;
+    }
+
+    .filter-menu::-webkit-scrollbar-track {
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.82), rgba(30, 41, 59, 0.62));
+        border-radius: 10px;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    html.light-mode .filter-menu::-webkit-scrollbar-track {
+        background: linear-gradient(180deg, rgba(241, 245, 249, 0.95), rgba(226, 232, 240, 0.92));
+        border-color: rgba(148, 163, 184, 0.35);
+    }
+
+    .filter-menu::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, rgba(96, 165, 250, 0.85), rgba(59, 130, 246, 0.78));
+        border-radius: 10px;
+        border: 2px solid rgba(15, 23, 42, 0.95);
+        box-shadow: inset 0 0 0 1px rgba(219, 234, 254, 0.18);
+    }
+
+    html.light-mode .filter-menu::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, rgba(59, 130, 246, 0.78), rgba(37, 99, 235, 0.72));
+        border-color: rgba(241, 245, 249, 0.95);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+    }
+
+    .filter-menu::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, rgba(125, 211, 252, 0.95), rgba(59, 130, 246, 0.9));
+    }
+
+    .filter-menu::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+
+    .filter-menu .dropdown-item {
+        border-radius: 8px;
+        color: var(--text-main);
+        font-weight: 600;
+        white-space: normal;
+    }
+
+    html.light-mode .filter-menu .dropdown-item {
+        color: #0f172a;
+    }
+
+    .filter-menu .dropdown-item:hover,
+    .filter-menu .dropdown-item:focus {
+        background: rgba(88, 166, 255, 0.12);
+        color: var(--accent-light);
+    }
+
+    html.light-mode .filter-menu .dropdown-item:hover,
+    html.light-mode .filter-menu .dropdown-item:focus {
+        background: rgba(59, 130, 246, 0.14);
+        color: #1d4ed8;
+    }
+
+    .active-filter {
+        border-radius: 999px;
+        border: 1px solid rgba(96, 165, 250, 0.6);
+        background: rgba(59, 130, 246, 0.2);
+        color: #dbeafe;
+        font-size: 0.78rem;
+        font-weight: 700;
+        padding: 5px 10px;
+    }
+
+    .filter-reset {
+        border: 1px solid var(--border-soft);
+        border-radius: 10px;
+        background: transparent;
+        color: var(--text-muted);
+        padding: 10px 12px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: border-color 0.2s, color 0.2s;
+    }
+
+    .filter-reset:hover {
+        border-color: var(--accent);
+        color: var(--accent-light);
     }
 
     .book-grid-card {
@@ -40,19 +280,73 @@
         opacity: 1;
     }
 
-    .library-title {
-        color: var(--accent-alt);
-        font-size: clamp(1.9rem, 2.1vw, 2.4rem);
-        font-weight: 800;
-        margin-bottom: 0;
+    .book-cover {
+        height: 248px;
+        width: 100%;
+        object-fit: contain;
+        background: #020617;
+    }
+
+    html.light-mode .book-cover {
+        background: #e2e8f0;
     }
 
     .book-grid-card .card-title {
-        font-size: 1.3rem;
+        font-size: 1.28rem;
+        line-height: 1.24;
+        margin-bottom: 0.35rem;
     }
 
     .book-grid-card .card-text {
-        font-size: 1rem;
+        font-size: 1.06rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .book-grid-card .card-body {
+        padding: 0.82rem;
+        min-height: 170px;
+    }
+
+    .book-grid-card .card-footer {
+        padding: 0 0.82rem 0.9rem !important;
+    }
+
+    .book-meta-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 8px;
+    }
+
+    .book-meta-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+
+    .book-meta-right {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-left: auto;
+    }
+
+    .book-meta-badge {
+        border-radius: 999px;
+        border: 1px solid var(--border-soft);
+        background: var(--bg-panel-soft);
+        color: var(--text-muted);
+        font-size: 0.92rem;
+        font-weight: 700;
+        padding: 3px 9px;
+    }
+
+    .book-meta-badge.rating {
+        color: #fef08a;
+        border-color: rgba(250, 204, 21, 0.45);
+        background: rgba(250, 204, 21, 0.1);
     }
 
     .book-card-link {
@@ -68,75 +362,182 @@
         border-radius: 8px;
         background-color: var(--accent);
         color: #ffffff;
-        padding: 0.5rem 0.75rem;
-        font-size: 0.96rem;
-        transition: background-color 0.2s;
+        padding: 0.45rem 0.62rem;
+        font-size: 1rem;
+        position: relative;
+        overflow: hidden;
+        transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card-cta-label::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -130%;
+        width: 120%;
+        height: 100%;
+        background: linear-gradient(100deg, rgba(255, 255, 255, 0) 10%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0) 90%);
+        transition: left 0.35s ease;
+        pointer-events: none;
+    }
+
+    .card-cta-label .cta-icon {
+        margin-left: 0.28rem;
+        transition: transform 0.22s ease;
     }
 
     .book-grid-card:hover .card-cta-label {
         background-color: var(--accent-light);
+        transform: translateY(-1px);
+        box-shadow: 0 8px 16px rgba(59, 130, 246, 0.28);
     }
 
-    .book-cover {
-        height: 440px;
-        object-fit: cover;
+    .book-grid-card:hover .card-cta-label::before {
+        left: 120%;
+    }
+
+    .book-grid-card:hover .card-cta-label .cta-icon {
+        transform: translateX(3px);
+    }
+
+    @media (max-width: 991.98px) {
+        .book-cover {
+            height: 210px;
+        }
     }
 
     @media (max-width: 575.98px) {
+        .library-shell {
+            padding: 14px 10px 24px;
+        }
+
         .library-shell .row {
-            --bs-gutter-x: 0.75rem;
-            --bs-gutter-y: 0.75rem;
+            --bs-gutter-x: 0.62rem;
+            --bs-gutter-y: 0.62rem;
+        }
+
+        .book-count {
+            font-size: 0.84rem;
+        }
+
+        .filters-wrap {
+            padding: 10px;
+            margin-bottom: 12px;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            min-width: 100%;
+            font-size: 0.88rem;
+            padding: 8px 10px;
+        }
+
+        .filter-reset {
+            width: 100%;
+            text-align: center;
+            padding: 8px 10px;
+            font-size: 0.86rem;
         }
 
         .book-cover {
-            height: 230px;
+            height: 160px;
         }
 
         .book-grid-card .card-body {
-            padding: 0.75rem;
+            padding: 0.62rem;
+            min-height: 145px;
         }
 
         .book-grid-card .card-footer {
-            padding: 0 0.75rem 0.75rem !important;
+            padding: 0 0.62rem 0.68rem !important;
         }
 
         .book-grid-card .card-title {
-            font-size: 0.98rem;
-            margin-bottom: 0.4rem;
+            font-size: 1.08rem;
             line-height: 1.2;
         }
 
         .book-grid-card .card-text {
-            font-size: 0.82rem;
-            margin-bottom: 0.35rem;
+            font-size: 0.94rem;
         }
 
         .book-grid-card .card-text:last-of-type {
             display: -webkit-box;
             -webkit-line-clamp: 2;
+            line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
-        .book-grid-card .btn {
-            font-size: 0.82rem;
-            padding: 0.42rem 0.5rem;
-        }
-
         .card-cta-label {
-            font-size: 0.82rem;
-            padding: 0.42rem 0.5rem;
+            font-size: 0.9rem;
+            padding: 0.38rem 0.42rem;
         }
     }
 </style>
 
 <div class="library-shell">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="library-topbar">
         <h2 class="library-title">Biblioteca</h2>
-        <span style="color: var(--text-muted); font-size: 1rem;">{{ livros|length }} livro{{ livros|length|pluralize }}</span>
+        <span class="book-count">{{ livros|length }} livro{{ livros|length|pluralize }}</span>
     </div>
 
-    <div class="row row-cols-2 row-cols-md-2 row-cols-xl-3 g-4">
+    <div class="filters-wrap">
+        <div class="dropdown">
+            <button class="filter-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-grid-3x3-gap-fill me-2"></i>
+                Categoria:
+                {% if categoria_selecionada %}
+                    {% for slug, nome, icone in categorias_disponiveis %}
+                        {% if slug == categoria_selecionada %}{{ nome }}{% endif %}
+                    {% endfor %}
+                {% else %}
+                    Todas
+                {% endif %}
+            </button>
+            <ul class="dropdown-menu filter-menu">
+                <li><a class="dropdown-item" href="?{% if ano_selecionado %}ano={{ ano_selecionado }}{% endif %}">Todas as categorias</a></li>
+                {% for slug, nome, icone in categorias_disponiveis %}
+                    <li>
+                        <a class="dropdown-item" href="?categoria={{ slug }}{% if ano_selecionado %}&ano={{ ano_selecionado }}{% endif %}"><i class="bi {{ icone }} me-2"></i>{{ nome }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="dropdown">
+            <button class="filter-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-calendar-event me-2"></i>
+                Ano:
+                {% if ano_selecionado %}{{ ano_selecionado }}{% else %}Todos{% endif %}
+            </button>
+            <ul class="dropdown-menu filter-menu">
+                <li><a class="dropdown-item" href="?{% if categoria_selecionada %}categoria={{ categoria_selecionada }}{% endif %}">Todos os anos</a></li>
+                {% for ano in anos_disponiveis %}
+                    <li>
+                        <a class="dropdown-item" href="?{% if categoria_selecionada %}categoria={{ categoria_selecionada }}&{% endif %}ano={{ ano }}">{{ ano }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% if categoria_selecionada %}
+            {% for slug, nome, icone in categorias_disponiveis %}
+                {% if slug == categoria_selecionada %}
+                    <span class="active-filter"><i class="bi {{ icone }} me-1"></i>Categoria: {{ nome }}</span>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if ano_selecionado %}
+            <span class="active-filter">Ano: {{ ano_selecionado }}</span>
+        {% endif %}
+
+        {% if categoria_selecionada or ano_selecionado %}
+            <a class="filter-reset" href="{% url 'biblioteca' %}">Limpar filtros</a>
+        {% endif %}
+    </div>
+
+    <div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-3 library-grid">
         {% for livro in livros %}
             <div class="col">
                 <div class="card h-100 shadow border-0 book-grid-card position-relative">
@@ -144,12 +545,19 @@
                         <img src="{{ livro.capa.url }}" class="card-img-top book-cover" alt="{{ livro.titulo }}">
                     {% endif %}
                     <div class="card-body">
+                        <div class="book-meta-top">
+                            <span class="book-meta-badge"><i class="bi {{ livro.categoria_icone }} me-1"></i>{{ livro.categoria_nome }}</span>
+                            <span class="book-meta-right">
+                                <span class="book-meta-badge">{{ livro.ano_lancamento|default:'Ano n/d' }}</span>
+                                <span class="book-meta-badge rating"><i class="bi bi-star-fill me-1"></i>{% if livro.media_nota %}{{ livro.media_nota|floatformat:1 }}{% else %}Sem nota{% endif %}</span>
+                            </span>
+                        </div>
                         <h5 class="card-title" style="color: var(--accent-alt-light);">{{ livro.titulo }}</h5>
                         <p class="card-text" style="color: var(--text-muted);">Autor: {{ livro.autor }}</p>
-                        <p class="card-text" style="color: var(--text-main);">{{ livro.sinopse|truncatewords:20 }}</p>
+                        <p class="card-text" style="color: var(--text-main);">{{ livro.sinopse|striptags|truncatewords:12 }}</p>
                     </div>
                     <div class="card-footer bg-transparent border-0 pb-3">
-                        <span class="card-cta-label">Ler Resenhas</span>
+                        <span class="card-cta-label">Ler Resenhas <i class="bi bi-arrow-right-short cta-icon"></i></span>
                     </div>
                     <a href="{% url 'detalhes_livro' livro.pk %}" class="stretched-link book-card-link" aria-label="Abrir detalhes de {{ livro.titulo }}"></a>
                 </div>

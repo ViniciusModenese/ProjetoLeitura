@@ -4,6 +4,14 @@ register = template.Library()
 
 
 @register.filter
+def get_item(mapping, key):
+    try:
+        return mapping.get(key)
+    except Exception:
+        return None
+
+
+@register.filter
 def star_classes(nota, pos):
     """
     Retorna as classes CSS + ícone Bootstrap Icons para uma estrela na posição `pos`.

@@ -37,6 +37,10 @@
         margin-bottom: 16px;
     }
 
+    html:not(.light-mode) .dashboard-title {
+        color: var(--accent-alt);
+    }
+
     .soft-line {
         border-top: 1px solid var(--border-soft);
     }
@@ -320,6 +324,36 @@
         gap: 8px;
     }
 
+    .usuario-resenha-meta {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .review-badge {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid var(--accent);
+        box-shadow: 0 0 8px rgba(88, 166, 255, 0.25);
+        flex-shrink: 0;
+    }
+
+    .review-badge-fallback {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.72rem;
+        border: 1px solid var(--accent);
+        background: rgba(88, 166, 255, 0.12);
+        color: var(--accent-light);
+        flex-shrink: 0;
+    }
+
     .usuario-avatar {
         width: 32px;
         height: 32px;
@@ -379,7 +413,7 @@
 
                 <div class="soft-line my-3"></div>
                 <div class="text-center gadget-badge-slot">
-                    {% with ultima_badge=user.perfil.badges.all.last %}
+                    {% with ultima_badge=ultima_badge_nivel %}
                         {% if user.is_authenticated and ultima_badge and ultima_badge.imagem %}
                             <div class="badge-hover-wrap">
                                 <img src="{{ ultima_badge.imagem.url }}" alt="{{ ultima_badge.nome }}" class="gadget-medal">
@@ -440,7 +474,18 @@
                                 {% else %}
                                     <div class="usuario-avatar-placeholder">👤</div>
                                 {% endif %}
-                                <span class="text-info fw-semibold">{{ resenha.usuario.get_full_name|default:resenha.usuario.username }}</span>
+                                <div class="usuario-resenha-meta">
+                                    <span class="text-info fw-semibold">{{ resenha.usuario.get_full_name|default:resenha.usuario.username }}</span>
+                                    {% with badge_usuario=user_badges_map|get_item:resenha.usuario_id %}
+                                        {% if badge_usuario %}
+                                            {% if badge_usuario.imagem %}
+                                                <img src="{{ badge_usuario.imagem.url }}" alt="{{ badge_usuario.nome }}" class="review-badge" title="{{ badge_usuario.nome }}">
+                                            {% else %}
+                                                <span class="review-badge-fallback" title="{{ badge_usuario.nome }}">🏅</span>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endwith %}
+                                </div>
                             </div>
                             <span class="star-line">
                                 <i class="bi {{ resenha.nota|star_classes:1 }}"></i>

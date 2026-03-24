@@ -6,6 +6,7 @@ from django.dispatch import receiver
 class Livro(models.Model):
     titulo = models.CharField(max_length=200)
     autor = models.CharField(max_length=150)
+    ano_publicacao = models.PositiveIntegerField(null=True, blank=True, db_index=True)
     sinopse = models.TextField()
     criador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='livros_adicionados')
     capa = models.ImageField(upload_to='capas/') 
