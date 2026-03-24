@@ -1,0 +1,36 @@
+<svg width="1400" height="840" viewBox="0 0 1400 840" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1400" height="840" fill="#0F172A"/>
+  <rect x="0" y="0" width="220" height="840" fill="#111827"/>
+  <rect x="24" y="24" width="172" height="172" rx="20" fill="#1F2937" stroke="#374151"/>
+  <rect x="24" y="230" width="172" height="42" rx="10" fill="#1E3A8A"/>
+  <rect x="24" y="282" width="172" height="42" rx="10" fill="#1F2937"/>
+  <rect x="24" y="334" width="172" height="42" rx="10" fill="#1F2937"/>
+
+  <rect x="236" y="0" width="1164" height="72" fill="#0B1220"/>
+  <text x="270" y="45" fill="#60A5FA" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="700">ESTANTE ABERTA</text>
+
+  <text x="266" y="132" fill="#FACC15" font-family="Segoe UI, Arial, sans-serif" font-size="54" font-weight="800">Dashboard</text>
+  <rect x="266" y="160" width="1110" height="2" fill="#334155"/>
+
+  <rect x="266" y="188" width="360" height="282" rx="16" fill="#111827" stroke="#334155"/>
+  <rect x="286" y="214" width="320" height="14" rx="7" fill="#60A5FA"/>
+  <rect x="286" y="244" width="260" height="10" rx="5" fill="#334155"/>
+  <circle cx="446" cy="330" r="86" fill="#0F172A" stroke="#3B82F6" stroke-width="14"/>
+  <text x="418" y="341" fill="#F8FAFC" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700">75%</text>
+
+  <rect x="646" y="188" width="730" height="282" rx="16" fill="#111827" stroke="#334155"/>
+  <rect x="666" y="214" width="260" height="14" rx="7" fill="#FACC15"/>
+  <rect x="666" y="252" width="690" height="190" rx="12" fill="#0F172A" stroke="#334155"/>
+  <rect x="686" y="272" width="146" height="150" rx="10" fill="#1F2937"/>
+  <rect x="844" y="272" width="146" height="150" rx="10" fill="#1F2937"/>
+  <rect x="1002" y="272" width="146" height="150" rx="10" fill="#1F2937"/>
+  <rect x="1160" y="272" width="176" height="150" rx="10" fill="#1F2937"/>
+
+  <rect x="266" y="494" width="1110" height="312" rx="16" fill="#111827" stroke="#334155"/>
+  <rect x="286" y="520" width="250" height="14" rx="7" fill="#60A5FA"/>
+  <rect x="286" y="548" width="1070" height="2" fill="#334155"/>
+
+  <rect x="286" y="568" width="340" height="214" rx="12" fill="#0F172A" stroke="#334155"/>
+  <rect x="646" y="568" width="340" height="214" rx="12" fill="#0F172A" stroke="#334155"/>
+  <rect x="1006" y="568" width="350" height="214" rx="12" fill="#0F172A" stroke="#334155"/>
+</svg>

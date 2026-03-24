@@ -4,7 +4,7 @@
 ![Python](https://img.shields.io/badge/Python-3.13+-3776AB?logo=python&logoColor=white)
 ![Status](https://img.shields.io/badge/status-ativo-2563eb)
 
-![Banner EstanteAberta](docs/assets/banner-estanteaberta.svg)
+![Banner EstanteAberta](docs/assets/banner-estanteaberta-v2.svg)
 
 Plataforma web para comunidade de leitura, com biblioteca interativa, resenhas, gamificacao por XP/medalhas e acompanhamento de metas pessoais.
 
@@ -18,25 +18,15 @@ O EstanteAberta combina experiencia visual moderna com features de engajamento:
 - Progressao por XP e medalhas para gamificar a jornada.
 - Tema dark/light com identidade visual consistente.
 
-## Preview
+## Screenshots do Produto
 
-Identidade visual:
+Dashboard:
 
-![Logo EstanteAberta](leitura/static/img/logo.png)
+![Screenshot Dashboard](docs/assets/screenshot-dashboard.svg)
 
-Atmosfera visual:
+Biblioteca:
 
-![Fundo da Biblioteca](leitura/static/img/fundo_biblioteca.png)
-
-## Demonstracao
-
-- Fluxo principal: login -> dashboard -> biblioteca -> detalhes do livro -> resenha.
-- Experiencia de biblioteca com filtros por categoria/ano, nota no card e tema dark/light.
-- Painel de metas com progresso visual e ritmo de leitura.
-
-Imagem de referencia da biblioteca:
-
-![Biblioteca](leitura/static/img/fundo_login.png)
+![Screenshot Biblioteca](docs/assets/screenshot-biblioteca.svg)
 
 ## Principais Funcionalidades
 
