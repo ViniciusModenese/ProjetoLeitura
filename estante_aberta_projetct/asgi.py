@@ -1,5 +1,5 @@
 """
-ASGI config for literamatch_project project.
+ASGI config for estante_aberta_projetct project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'literamatch_project.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'estante_aberta_projetct.settings')
 
 application = get_asgi_application()

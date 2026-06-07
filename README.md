@@ -43,7 +43,7 @@ Biblioteca:
 ```text
 ProjetoLeitura/
   leitura/                  # App principal: models, views, forms, templates
-  literamatch_project/      # Configuracoes Django (settings, urls, wsgi/asgi)
+  estante_aberta_projetct/  # Configuracoes Django (settings, urls, wsgi/asgi)
   media/                    # Uploads locais (capas, badges, perfis)
   manage.py
 ```

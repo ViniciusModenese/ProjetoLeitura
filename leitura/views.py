@@ -303,8 +303,8 @@ def minhas_metas(request):
     livros_mes_percent = [int((v / max_livros_mes) * 100) for v in livros_por_mes]
     resenhas_mes_percent = [int((v / max_resenhas_mes) * 100) for v in resenhas_por_mes]
 
-    total_badges = Badge.objects.count()
-    badges_desbloqueadas = perfil.badges.count()
+    total_badges = badges_nivel_qs().count()
+    badges_desbloqueadas = perfil.badges.filter(nome__startswith='Nivel ').count()
     badge_percent = min(int((badges_desbloqueadas / total_badges) * 100), 100) if total_badges > 0 else 0
 
     livros_barras = []

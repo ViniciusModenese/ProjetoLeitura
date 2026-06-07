@@ -32,7 +32,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'literamatch_project.urls'
+ROOT_URLCONF = 'estante_aberta_projetct.urls'
 
 TEMPLATES = [
     {
@@ -49,7 +49,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'literamatch_project.wsgi.application'
+WSGI_APPLICATION = 'estante_aberta_projetct.wsgi.application'
 
 DATABASES = {
     'default': {
